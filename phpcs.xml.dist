@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<ruleset name="Platform-Mail-Service-Api">
+    <description>The coding standard of Platform-Mail-Service-Api package</description>
+    <arg value="p" />
+
+    <config name="ignore_warnings_on_exit" value="1" />
+    <config name="ignore_errors_on_exit" value="1" />
+
+    <arg name="colors" />
+    <arg value="s" />
+
+    <!-- Use the PSR12 Standard-->
+    <rule ref="PSR12" />
+
+    <rule ref="Generic.PHP.ForbiddenFunctions">
+        <properties>
+            <property name="forbiddenFunctions" type="array" value="eval=>NULL,dd=>NULL,die=>NULL,var_dump=>NULL,dump=>NULL,sizeof=>count,delete=>unset,print=>echo,echo=>NULL,print_r=>NULL,create_function=>NULL"/>
+        </properties>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.FunctionSpacing">
+        <properties>
+            <property name="spacing" value="1" />
+            <property name="spacingBeforeFirst" value="0" />
+            <property name="spacingAfterLast" value="0" />
+        </properties>
+    </rule>
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace">
+        <properties>
+            <property name="ignoreBlankLines" value="false" />
+        </properties>
+    </rule>
+
+    <rule ref="Squiz.PHP.LowercasePHPFunctions"/>
+    <rule ref="Generic.PHP.RequireStrictTypes"/>
+    <rule ref="Squiz.Arrays.ArrayBracketSpacing"/>
+
+    <file>src/</file>
+</ruleset>
