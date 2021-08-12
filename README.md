@@ -17,7 +17,7 @@ Open a command console, enter your project directory and execute:
 $ composer require --dev macpaw/behat-messenger-context
 ```
 
-Step 2: Adding to Load Container Messenger Context
+Step 2: Update Container config to load Messenger Context
 ----------------------------------
 In the `config/services_test.yaml` file of your project:
 
