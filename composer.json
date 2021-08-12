@@ -1,0 +1,62 @@
+{
+    "name": "macpaw/behat-messenger-context",
+    "type": "library",
+    "description": "Behat Context for testing Symfony Messenger component",
+    "keywords": [
+        "MacPaw",
+        "symfony",
+        "behat",
+        "BDD",
+        "Context",
+        "Messenger"
+    ],
+    "authors": [
+        {
+            "name": "IiiigorGG",
+            "email": "roidloua@gmail.com",
+            "homepage": "https://macpaw.com/",
+            "role": "Software Engineer"
+        },
+        {
+            "name": "Yozhef Hisem",
+            "email": "hisemjo@gmail.com",
+            "homepage": "https://macpaw.com/",
+            "role": "Software Engineer"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "behat/behat": "^3.0",
+        "symfony/messenger": "^4.4 || ^5.0",
+        "symfony/serializer": "^4.4 || ^5.0"
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.12",
+        "phpunit/phpunit": "^9.3",
+        "slevomat/coding-standard": "^7.0",
+        "squizlabs/php_codesniffer": "^3.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "BehatMessengerContext\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "BehatMessengerContext\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "phpstan": "./vendor/bin/phpstan analyse -l max",
+        "code-style": "./vendor/bin/phpcs",
+        "code-style-fix": "./vendor/bin/phpcbf",
+        "phpunit": "./vendor/bin/phpunit",
+        "dev-checks": [
+            "composer validate",
+            "@phpstan",
+            "@code-style",
+            "@phpunit"
+        ]
+    }
+}
