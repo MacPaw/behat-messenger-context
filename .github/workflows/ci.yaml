@@ -70,10 +70,9 @@ jobs:
               run: vendor/bin/phpunit --coverage-clover=coverage.xml
               if: matrix.coverage == 'xdebug'
 
-#TODO: need public release
-#            - name: Run codecov
-#              uses: codecov/codecov-action@v1
-#              if: matrix.coverage == 'xdebug'
-#              with:
-#                  file: './coverage.xml'
-#                  fail_ci_if_error: true
+            - name: Run codecov
+              uses: codecov/codecov-action@v1
+              if: matrix.coverage == 'xdebug'
+              with:
+                  file: './coverage.xml'
+                  fail_ci_if_error: true
