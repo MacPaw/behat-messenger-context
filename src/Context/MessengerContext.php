@@ -35,16 +35,19 @@ class MessengerContext implements Context
         $expectedMessage = $this->decodeExpectedJson($expectedMessage);
 
         $transport = $this->getMessengerTransportByName($busName);
+        $actualMessageList = [];
         foreach ($transport->get() as $envelope) {
             $actualMessage = $this->convertToArray($envelope->getMessage());
             if ($this->isArraysSimilar($actualMessage, $expectedMessage)) {
                 return;
             }
+
+            $actualMessageList[] = $actualMessage;
         }
 
         throw new Exception(
             sprintf(
-                'The transport doesn\'t contain message with JSON: %s',
+                'The transport doesn\'t contain message with such JSON, actual messages: %s',
                 $this->getPrettyJson($expectedMessage)
             )
         );
@@ -62,16 +65,19 @@ class MessengerContext implements Context
         $expectedMessage = $this->decodeExpectedJson($expectedMessage);
 
         $transport = $this->getMessengerTransportByName($busName);
+        $actualMessageList = [];
         foreach ($transport->get() as $envelope) {
             $actualMessage = $this->convertToArray($envelope->getMessage());
             if ($this->isArraysSimilar($actualMessage, $expectedMessage, $variableFields)) {
                 return;
             }
+
+            $actualMessageList[] = $actualMessage;
         }
 
         throw new Exception(
             sprintf(
-                'The transport doesn\'t contain message with JSON: %s',
+                'The transport doesn\'t contain message with such JSON, actual messages: %s',
                 $this->getPrettyJson($expectedMessage)
             )
         );
