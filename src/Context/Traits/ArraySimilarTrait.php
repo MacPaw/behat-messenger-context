@@ -7,8 +7,8 @@ namespace BehatMessengerContext\Context\Traits;
 trait ArraySimilarTrait
 {
     /**
-     * @param array<mixed> $expected
-     * @param array<mixed> $actual
+     * @param array<mixed>  $expected
+     * @param array<mixed>  $actual
      * @param array<string> $variableFields
      */
     protected function isArraysSimilar(array $expected, array $actual, array $variableFields = []): bool
@@ -30,7 +30,7 @@ trait ArraySimilarTrait
                 if (!$this->isArraysSimilar($expected[$k], $actual[$k], $variableFields)) {
                     return false;
                 }
-            } elseif (!in_array($k, $variableFields, true) && ($expected[$k] !== $actual[$k])) {
+            } elseif (!in_array($k, $variableFields, true) && ($actual[$k] !== $expected[$k])) {
                 return false;
             } elseif (in_array($k, $variableFields, true)) {
                 if (
