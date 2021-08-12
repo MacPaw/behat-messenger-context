@@ -26,7 +26,7 @@ In the `config/services_test.yaml` file of your project:
         resource: '../vendor/macpaw/symfony-behat-context/src/*'
 ```
 
-Step 3: Configuration Behat
+Step 3: Configure Behat
 =============
 Go to `behat.yml`
 
@@ -45,4 +45,3 @@ Go to `behat.yml`
 [master Code Coverage Image]: https://img.shields.io/codecov/c/github/macpaw/BehatMessengerContext/master?logo=codecov
 [develop Code Coverage]: https://codecov.io/gh/macpaw/BehatMessengerContext/branch/develop
 [develop Code Coverage Image]: https://img.shields.io/codecov/c/github/macpaw/BehatMessengerContext/develop?logo=codecov
-
