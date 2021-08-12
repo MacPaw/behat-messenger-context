@@ -26,7 +26,22 @@ In the `config/services_test.yaml` file of your project:
         resource: '../vendor/macpaw/symfony-behat-context/src/*'
 ```
 
-Step 3: Configure Behat
+Step 3: Configure Messenger 
+=============
+Copying `config/packages/dev/messenger.yaml` and pasting that into `config/packages/test/`. This gives us messenger configuration that will only be used in the test environment. Uncomment the code, and replace sync with in-memory. Do that for both of the transports.
+
+```yaml
+framework:
+    messenger:
+        transports:
+            async: 'in-memory://'
+            async_priority_high: 'in-memory://'
+            ...
+...
+```
+
+
+Step 4: Configure Behat
 =============
 Go to `behat.yml`
 
