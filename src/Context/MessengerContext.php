@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MessengerBehatContext\Context;
+namespace BehatMessengerContext\Context;
 
-use MessengerBehatContext\Context\Traits\ArraySimilarTrait;
+use BehatMessengerContext\Context\Traits\ArraySimilarTrait;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Exception;

@@ -29,6 +29,11 @@
             <property name="ignoreBlankLines" value="false" />
         </properties>
     </rule>
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
+        <properties>
+            <property name="searchAnnotations" value="true" />
+        </properties>
+    </rule>
 
     <rule ref="Squiz.PHP.LowercasePHPFunctions"/>
     <rule ref="Generic.PHP.RequireStrictTypes"/>

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MessengerBehatContext\Context\Traits;
+namespace BehatMessengerContext\Context\Traits;
 
 trait ArraySimilarTrait
 {
