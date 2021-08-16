@@ -7,8 +7,8 @@ namespace BehatMessengerContext\Context\Traits;
 trait ArraySimilarTrait
 {
     /**
-     * @param array<mixed> $expected
-     * @param array<mixed> $actual
+     * @param array<mixed>  $expected
+     * @param array<mixed>  $actual
      * @param array<string> $variableFields
      */
     protected function isArraysSimilar(array $expected, array $actual, array $variableFields = []): bool
@@ -17,25 +17,25 @@ trait ArraySimilarTrait
             return false;
         }
 
-        foreach ($expected as $k => $v) {
-            if (!isset($actual[$k]) && $v !== null) {
+        foreach ($expected as $key => $value) {
+            if (!isset($actual[$key]) && $value !== null) {
                 return false;
             }
 
-            if (gettype($expected[$k]) !== gettype($actual[$k]) && !in_array($k, $variableFields)) {
+            if (gettype($value) !== gettype($actual[$key]) && !in_array($key, $variableFields)) {
                 return false;
             }
 
-            if (is_array($v)) {
-                if (!$this->isArraysSimilar($expected[$k], $actual[$k], $variableFields)) {
+            if (is_array($value)) {
+                if (!$this->isArraysSimilar($value, $actual[$key], $variableFields)) {
                     return false;
                 }
-            } elseif (!in_array($k, $variableFields, true) && ($expected[$k] !== $actual[$k])) {
+            } elseif (!in_array($key, $variableFields, true) && ($actual[$key] !== $value)) {
                 return false;
-            } elseif (in_array($k, $variableFields, true)) {
+            } elseif (in_array($key, $variableFields, true)) {
                 if (
-                    is_string($expected[$k]) && strpos($expected[$k], '~') === 0
-                    && !preg_match(sprintf('|%s|', substr($expected[$k], 1)), $actual[$k])
+                    is_string($value) && strpos($value, '~') === 0
+                    && !preg_match(sprintf('|%s|', substr($value, 1)), $actual[$key])
                 ) {
                     return false;
                 }
