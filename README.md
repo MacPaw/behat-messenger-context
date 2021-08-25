@@ -48,7 +48,7 @@ Go to `behat.yml`
 ```yaml
 ...
   contexts:
-    - SymfonyBehatContext\Context\MessengerContext
+    - BehatMessengerContext\Context\MessengerContext
 ...
 ```
 
