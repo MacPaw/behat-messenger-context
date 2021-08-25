@@ -10,18 +10,18 @@ use Behat\Gherkin\Node\PyStringNode;
 use Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\InMemoryTransport;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class MessengerContext implements Context
 {
     use ArraySimilarTrait;
 
     private ContainerInterface $container;
-    private Serializer $serializer;
+    private SerializerInterface $serializer;
 
     public function __construct(
         ContainerInterface $container,
-        Serializer $serializer
+        SerializerInterface $serializer
     ) {
         $this->container = $container;
         $this->serializer = $serializer;
@@ -189,7 +189,7 @@ class MessengerContext implements Context
         $hasTransport = $this->container->has($fullName);
 
         if ($hasTransport === false) {
-            throw new Exception('Transport' . $fullName . ' not found');
+            throw new Exception('Transport ' . $fullName . ' not found');
         }
 
         $transport = $this->container->get($fullName);
@@ -199,7 +199,7 @@ class MessengerContext implements Context
         }
 
         throw new Exception(
-            'In memory transport' . $fullName . ' not found'
+            'In memory transport ' . $fullName . ' not found'
         );
     }
 }
