@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+### [1.0.1](https://github.com/MacPaw/BehatMessengerContext/compare/v1.0.0...v1.0.1) (2021-08-26)
+
+
+### Bug Fixes
+
+* update serialized ([8554798](https://github.com/MacPaw/BehatMessengerContext/commit/8554798d39ae6d0bd11735f4bf23073e03466f18))
+* update serialized ([ba9646e](https://github.com/MacPaw/BehatMessengerContext/commit/ba9646e88a46c0e25927e748e7bfdd4869519f5e))
+
 ## 1.0.0 (2021-08-16)
 
 
