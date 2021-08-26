@@ -23,7 +23,7 @@ In the `config/services_test.yaml` file of your project:
 
 ```
     BehatMessengerContext\:
-        resource: '../vendor/macpaw/symfony-behat-context/src/*'
+        resource: '../vendor/macpaw/behat-messenger-context/src/*'
 ```
 
 Step 3: Configure Messenger 
@@ -48,7 +48,7 @@ Go to `behat.yml`
 ```yaml
 ...
   contexts:
-    - SymfonyBehatContext\Context\MessengerContext
+    - BehatMessengerContext\Context\MessengerContext
 ...
 ```
 
