@@ -10,21 +10,21 @@ use Behat\Gherkin\Node\PyStringNode;
 use Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\InMemoryTransport;
-use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Normalizer\NormalizableInterface;
 
 class MessengerContext implements Context
 {
     use ArraySimilarTrait;
 
     private ContainerInterface $container;
-    private Serializer $serializer;
+    private NormalizableInterface $normalizable;
 
     public function __construct(
         ContainerInterface $container,
-        Serializer $serializer
+        NormalizableInterface $normalizable
     ) {
         $this->container = $container;
-        $this->serializer = $serializer;
+        $this->normalizable = $normalizable;
     }
 
     /**
@@ -65,14 +65,11 @@ class MessengerContext implements Context
         $expectedMessage = $this->decodeExpectedJson($expectedMessage);
 
         $transport = $this->getMessengerTransportByName($busName);
-        $actualMessageList = [];
         foreach ($transport->get() as $envelope) {
             $actualMessage = $this->convertToArray($envelope->getMessage());
             if ($this->isArraysSimilar($actualMessage, $expectedMessage, $variableFields)) {
                 return;
             }
-
-            $actualMessageList[] = $actualMessage;
         }
 
         throw new Exception(
@@ -167,7 +164,7 @@ class MessengerContext implements Context
      */
     private function convertToArray($object): array
     {
-        return (array) $this->serializer->normalize($object);
+        return (array) $this->normalizable->normalize($object);
     }
 
     /**
@@ -189,7 +186,7 @@ class MessengerContext implements Context
         $hasTransport = $this->container->has($fullName);
 
         if ($hasTransport === false) {
-            throw new Exception('Transport' . $fullName . ' not found');
+            throw new Exception('Transport ' . $fullName . ' not found');
         }
 
         $transport = $this->container->get($fullName);
@@ -199,7 +196,7 @@ class MessengerContext implements Context
         }
 
         throw new Exception(
-            'In memory transport' . $fullName . ' not found'
+            'In memory transport ' . $fullName . ' not found'
         );
     }
 }
