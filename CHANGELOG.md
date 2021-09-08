@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.0](https://github.com/MacPaw/BehatMessengerContext/compare/v1.0.1...v1.1.0) (2021-09-08)
+
+
+### Features
+
+* add contribution doc ([1e83e34](https://github.com/MacPaw/BehatMessengerContext/commit/1e83e340cf664352a4d15e2eac9822a2c1b0f08f))
+
+
+### Bug Fixes
+
+* symfony container wiring fixes ([9e18b35](https://github.com/MacPaw/BehatMessengerContext/commit/9e18b3550b854c9c4953929d98675b99e7caf8f9))
+
 ### [1.0.1](https://github.com/MacPaw/BehatMessengerContext/compare/v1.0.0...v1.0.1) (2021-08-26)
 
 
