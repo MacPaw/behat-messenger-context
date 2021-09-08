@@ -24,6 +24,8 @@ In the `config/services_test.yaml` file of your project:
 ```
     BehatMessengerContext\:
         resource: '../vendor/macpaw/behat-messenger-context/src/*'
+        arguments:
+            - '@test.service_container'
 ```
 
 Step 3: Configure Messenger 
