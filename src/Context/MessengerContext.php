@@ -38,7 +38,7 @@ class MessengerContext implements Context
         $actualMessageList = [];
         foreach ($transport->get() as $envelope) {
             $actualMessage = $this->convertToArray($envelope->getMessage());
-            if ($this->isArraysSimilar($actualMessage, $expectedMessage)) {
+            if ($this->isArraysSimilar($expectedMessage, $actualMessage)) {
                 return;
             }
 
@@ -68,7 +68,7 @@ class MessengerContext implements Context
         $actualMessageList = [];
         foreach ($transport->get() as $envelope) {
             $actualMessage = $this->convertToArray($envelope->getMessage());
-            if ($this->isArraysSimilar($actualMessage, $expectedMessage, $variableFields)) {
+            if ($this->isArraysSimilar($expectedMessage, $actualMessage, $variableFields)) {
                 return;
             }
 
@@ -96,7 +96,7 @@ class MessengerContext implements Context
             $actualMessageList[] = $this->convertToArray($envelope->getMessage());
         }
 
-        if (!$this->isArraysSimilar($actualMessageList, $expectedMessageList)) {
+        if (!$this->isArraysSimilar($expectedMessageList, $actualMessageList)) {
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',
@@ -123,7 +123,7 @@ class MessengerContext implements Context
             $actualMessageList[] = $this->convertToArray($envelope->getMessage());
         }
 
-        if (!$this->isArraysSimilar($actualMessageList, $expectedMessageList, $variableFields)) {
+        if (!$this->isArraysSimilar($expectedMessageList, $actualMessageList, $variableFields)) {
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',
