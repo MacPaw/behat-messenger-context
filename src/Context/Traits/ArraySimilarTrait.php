@@ -37,7 +37,7 @@ trait ArraySimilarTrait
                     return false;
                 }
 
-                if (!preg_match(sprintf('|%s|', substr($value, 1)), $actual[$key])) {
+                if (!preg_match(sprintf('/%s/', substr($value, 1)), $actual[$key])) {
                     return false;
                 }
             }

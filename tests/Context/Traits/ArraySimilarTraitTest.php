@@ -9,6 +9,8 @@ use PHPUnit\Framework\TestCase;
 
 class ArraySimilarTraitTest extends TestCase
 {
+    private const ATOM_DATETIME_PATTERN = '~\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d';
+
     use ArraySimilarTrait;
 
     public function testSuccess(): void
@@ -34,13 +36,16 @@ class ArraySimilarTraitTest extends TestCase
 
     public function testVariableFieldsSuccess(): void
     {
-        $validValues = ['this', 'test'];
-        $actualValue = $validValues[\array_rand($validValues)];
-
         $result = $this->isArraysSimilar(
-            ['a' => '~^t[a-z]', 'b' => 1],
-            ['a' => $actualValue, 'b' => 1],
-            ['a']
+            [
+                'time' => self::ATOM_DATETIME_PATTERN,
+                'foo' => 1,
+            ],
+            [
+                'time' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM),
+                'foo' => 1,
+            ],
+            ['time'],
         );
 
         self::assertTrue($result);
