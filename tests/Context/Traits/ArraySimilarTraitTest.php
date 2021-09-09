@@ -69,5 +69,11 @@ class ArraySimilarTraitTest extends TestCase
             ['a' => 'bar'],
             ['a'],
         ];
+
+        yield '#3: Do not match the pattern' => [
+            ['a' => '~^t[a-z]'],
+            ['a' => 'foo'],
+            ['a'],
+        ];
     }
 }
