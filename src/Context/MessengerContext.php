@@ -18,13 +18,22 @@ class MessengerContext implements Context
 
     private ContainerInterface $container;
     private NormalizerInterface $normalizer;
+    /** @var array<string, string> */
+    private array $placeholderPatternMap;
 
+    /**
+     * @param ContainerInterface $container
+     * @param NormalizerInterface $normalizer
+     * @param array<string, string> $placeholderPatternMap
+     */
     public function __construct(
         ContainerInterface $container,
-        NormalizerInterface $normalizer
+        NormalizerInterface $normalizer,
+        array $placeholderPatternMap = []
     ) {
         $this->container = $container;
         $this->normalizer = $normalizer;
+        $this->placeholderPatternMap = $placeholderPatternMap;
     }
 
     /**
@@ -68,7 +77,13 @@ class MessengerContext implements Context
         $actualMessageList = [];
         foreach ($transport->get() as $envelope) {
             $actualMessage = $this->convertToArray($envelope->getMessage());
-            if ($this->isArraysSimilar($expectedMessage, $actualMessage, $variableFields)) {
+            $isArraysSimilar = $this->isArraysSimilar(
+                $expectedMessage,
+                $actualMessage,
+                $variableFields,
+                $this->placeholderPatternMap
+            );
+            if ($isArraysSimilar) {
                 return;
             }
 
@@ -123,7 +138,13 @@ class MessengerContext implements Context
             $actualMessageList[] = $this->convertToArray($envelope->getMessage());
         }
 
-        if (!$this->isArraysSimilar($expectedMessageList, $actualMessageList, $variableFields)) {
+        $isArraysSimilar = $this->isArraysSimilar(
+            $expectedMessageList,
+            $actualMessageList,
+            $variableFields,
+            $this->placeholderPatternMap
+        );
+        if (!$isArraysSimilar) {
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',

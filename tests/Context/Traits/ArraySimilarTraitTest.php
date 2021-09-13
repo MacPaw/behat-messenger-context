@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class ArraySimilarTraitTest extends TestCase
 {
-    private const ATOM_DATETIME_PATTERN = '~\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d';
+    private const ATOM_DATETIME_PATTERN = '\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d';
 
     use ArraySimilarTrait;
 
@@ -38,7 +38,7 @@ class ArraySimilarTraitTest extends TestCase
     {
         $result = $this->isArraysSimilar(
             [
-                'time' => self::ATOM_DATETIME_PATTERN,
+                'time' => '~'.self::ATOM_DATETIME_PATTERN,
                 'foo' => 1,
             ],
             [
@@ -80,5 +80,23 @@ class ArraySimilarTraitTest extends TestCase
             ['a' => 'foo'],
             ['a'],
         ];
+
+        yield '#4: Empty placeholder-pattern map' => [
+            ['a' => '{test}'],
+            ['a' => 'foo'],
+            ['a'],
+        ];
+    }
+
+    public function testVariableFieldsPlaceholder(): void
+    {
+        $result = $this->isArraysSimilar(
+            ['date' => '{datetime_atom}'],
+            ['date' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM)],
+            ['date'],
+            ['datetime_atom' => '/'.self::ATOM_DATETIME_PATTERN.'/'],
+        );
+
+        self::assertTrue($result);
     }
 }
