@@ -10,9 +10,14 @@ trait ArraySimilarTrait
      * @param array<mixed>  $expected
      * @param array<mixed>  $actual
      * @param array<string> $variableFields
+     * @param array<string, string> $placeholderPatternMap
      */
-    protected function isArraysSimilar(array $expected, array $actual, array $variableFields = []): bool
-    {
+    protected function isArraysSimilar(
+        array $expected,
+        array $actual,
+        array $variableFields = [],
+        array $placeholderPatternMap = []
+    ): bool {
         if (array_keys($expected) !== array_keys($actual)) {
             return false;
         }
@@ -27,17 +32,30 @@ trait ArraySimilarTrait
             }
 
             if (is_array($value)) {
-                if (!$this->isArraysSimilar($value, $actual[$key], $variableFields)) {
+                if (!$this->isArraysSimilar($value, $actual[$key], $variableFields, $placeholderPatternMap)) {
                     return false;
                 }
             } elseif (!in_array($key, $variableFields, true) && ($actual[$key] !== $value)) {
                 return false;
             } elseif (in_array($key, $variableFields, true)) {
-                if (!is_string($value) || strpos($value, '~') !== 0) {
+                if (!is_string($value)) {
                     return false;
                 }
 
-                if (!preg_match(sprintf('/%s/', substr($value, 1)), $actual[$key])) {
+                $isPlaceholder = strpos($value, '{') === 0 && !empty($placeholderPatternMap);
+
+                if (strpos($value, '~') !== 0 && !$isPlaceholder) {
+                    return false;
+                }
+
+                $pattern = sprintf('/%s/', substr($value, 1));
+
+                if ($isPlaceholder) {
+                    $placeholder = \str_replace(['{', '}'], '', $value);
+                    $pattern = $placeholderPatternMap[$placeholder];
+                }
+
+                if (!preg_match($pattern, $actual[$key])) {
                     return false;
                 }
             }
