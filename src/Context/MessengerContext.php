@@ -10,7 +10,9 @@ use Behat\Gherkin\Node\PyStringNode;
 use Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\InMemoryTransport;
+use Symfony\Component\Messenger\Transport\TransportInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Zenstruck\Messenger\Test\Transport\TestTransport;
 
 class MessengerContext implements Context
 {
@@ -204,7 +206,7 @@ class MessengerContext implements Context
         );
     }
 
-    private function getMessengerTransportByName(string $transportName): InMemoryTransport
+    private function getMessengerTransportByName(string $transportName): TransportInterface
     {
         $fullName = 'messenger.transport.' . $transportName;
         $hasTransport = $this->container->has($fullName);
@@ -216,6 +218,10 @@ class MessengerContext implements Context
         $transport = $this->container->get($fullName);
 
         if ($transport instanceof InMemoryTransport) {
+            return $transport;
+        }
+
+        if (\class_exists(TestTransport::class) && $transport instanceof TestTransport) {
             return $transport;
         }
 
