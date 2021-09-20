@@ -42,7 +42,9 @@ trait ArraySimilarTrait
                     return false;
                 }
 
-                $isPlaceholder = strpos($value, '{') === 0 && !empty($placeholderPatternMap);
+                $isPlaceholder = !empty($placeholderPatternMap)
+                    && strpos($value, '{') === 0
+                    && \substr($value, -1) === '}';
 
                 if (strpos($value, '~') !== 0 && !$isPlaceholder) {
                     return false;

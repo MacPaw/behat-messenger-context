@@ -54,9 +54,13 @@ class ArraySimilarTraitTest extends TestCase
     /**
      * @dataProvider variableFieldsFailProvider
      */
-    public function testVariableFieldsFail(array $expected, array $actual, array $variableFields): void
-    {
-        $result = $this->isArraysSimilar($expected, $actual, $variableFields);
+    public function testVariableFieldsFail(
+        array $expected,
+        array $actual,
+        array $variableFields,
+        array $placeholderPatternMap = []
+    ): void {
+        $result = $this->isArraysSimilar($expected, $actual, $variableFields, $placeholderPatternMap);
 
         self::assertFalse($result);
     }
@@ -85,6 +89,13 @@ class ArraySimilarTraitTest extends TestCase
             ['a' => '{test}'],
             ['a' => 'foo'],
             ['a'],
+        ];
+
+        yield '#5: Placeholder is not closed' => [
+            ['a' => '{test'],
+            ['a' => 'foo'],
+            ['a'],
+            ['test' => '/foo/'],
         ];
     }
 
