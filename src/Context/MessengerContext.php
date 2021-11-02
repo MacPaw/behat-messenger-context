@@ -45,9 +45,8 @@ class MessengerContext implements Context
     {
         $expectedMessage = $this->decodeExpectedJson($expectedMessage);
 
-        $transport = $this->getMessengerTransportByName($transportName);
         $actualMessageList = [];
-        foreach ($transport->get() as $envelope) {
+        foreach ($this->getEnvelopesFromTransport($transportName) as $envelope) {
             $actualMessage = $this->convertToArray($envelope->getMessage());
             if ($this->isArraysSimilar($expectedMessage, $actualMessage)) {
                 return;
@@ -75,9 +74,8 @@ class MessengerContext implements Context
         $variableFields = $variableFields ? array_map('trim', explode(',', $variableFields)) : [];
         $expectedMessage = $this->decodeExpectedJson($expectedMessage);
 
-        $transport = $this->getMessengerTransportByName($transportName);
         $actualMessageList = [];
-        foreach ($transport->get() as $envelope) {
+        foreach ($this->getEnvelopesFromTransport($transportName) as $envelope) {
             $actualMessage = $this->convertToArray($envelope->getMessage());
             $isArraysSimilar = $this->isArraysSimilar(
                 $expectedMessage,
@@ -107,9 +105,8 @@ class MessengerContext implements Context
     {
         $expectedMessageList = $this->decodeExpectedJson($expectedMessageList);
 
-        $transport = $this->getMessengerTransportByName($transportName);
         $actualMessageList = [];
-        foreach ($transport->get() as $envelope) {
+        foreach ($this->getEnvelopesFromTransport($transportName) as $envelope) {
             $actualMessageList[] = $this->convertToArray($envelope->getMessage());
         }
 
@@ -134,9 +131,8 @@ class MessengerContext implements Context
         $variableFields = $variableFields ? array_map('trim', explode(',', $variableFields)) : [];
         $expectedMessageList = $this->decodeExpectedJson($expectedMessageList);
 
-        $transport = $this->getMessengerTransportByName($transportName);
         $actualMessageList = [];
-        foreach ($transport->get() as $envelope) {
+        foreach ($this->getEnvelopesFromTransport($transportName) as $envelope) {
             $actualMessageList[] = $this->convertToArray($envelope->getMessage());
         }
 
@@ -161,8 +157,7 @@ class MessengerContext implements Context
      */
     public function thereIsCountMessagesInTransport(int $expectedMessageCount, string $transportName): void
     {
-        $transport = $this->getMessengerTransportByName($transportName);
-        $actualMessageCount = count($transport->get());
+        $actualMessageCount = count($this->getEnvelopesFromTransport($transportName));
 
         if ($actualMessageCount !== $expectedMessageCount) {
             throw new Exception(
@@ -204,6 +199,21 @@ class MessengerContext implements Context
             512,
             JSON_THROW_ON_ERROR
         );
+    }
+
+    private function getEnvelopesFromTransport(string $transportName): iterable
+    {
+        $transport = $this->getMessengerTransportByName($transportName);
+
+        if ($transport instanceof InMemoryTransport) {
+            return $transport->get();
+        }
+
+        if (\class_exists(TestTransport::class) && $transport instanceof TestTransport) {
+            return $transport->dispatched();
+        }
+
+        throw new Exception('Unknown transport ' . $transportName);
     }
 
     private function getMessengerTransportByName(string $transportName): TransportInterface
