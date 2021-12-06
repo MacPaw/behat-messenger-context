@@ -63,8 +63,11 @@ jobs:
                   key: ${{ runner.os }}-${{ matrix.php }}-${{ matrix.symfony-versions }}-composer-${{ hashFiles('composer.json') }}
                   restore-keys: ${{ runner.os }}-${{ matrix.php }}-${{ matrix.symfony-versions }}-composer
 
-            - name: Install dependencies
-              run: composer require "symfony/symfony:${{ matrix.symfony-versions }}" --no-update
+            - name: Update Symfony version
+              if: matrix.symfony-versions != ''
+              run: |
+                  composer require symfony/messenger:${{ matrix.symfony-versions }} --no-update --no-scripts
+                  composer require symfony/serializer:${{ matrix.symfony-versions }} --no-update --no-scripts
 
             - name: Install dependencies
               run: composer install
