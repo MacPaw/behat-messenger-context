@@ -33,10 +33,11 @@ trait ArraySimilarTrait
             } elseif (!in_array($key, $variableFields, true) && ($actual[$key] !== $value)) {
                 return false;
             } elseif (in_array($key, $variableFields, true)) {
-                if (
-                    is_string($value) && strpos($value, '~') === 0
-                    && !preg_match(sprintf('|%s|', substr($value, 1)), $actual[$key])
-                ) {
+                if (!is_string($value) || strpos($value, '~') !== 0) {
+                    return false;
+                }
+
+                if (!preg_match(sprintf('|%s|', substr($value, 1)), $actual[$key])) {
                     return false;
                 }
             }
