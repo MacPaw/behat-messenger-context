@@ -1,4 +1,4 @@
-# Contribute to Behat Messenger Bundle
+# Contribute to BehatMessengerContext
 
 Thank you for contributing!
 
@@ -16,9 +16,9 @@ This project uses [PHP CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer
 The coding standard rules are defined in the **phpcs.xml.dist** file (part of this repository).
 
 Your Pull-Request must be compliant with the said standard.
-To check your code you can run `composer run cs`. This command will give you a list of violations in your code (if any).
+To check your code you can run `composer run code-style`. This command will give you a list of violations in your code (if any).
 
-The most common errors can be automatically fixed just by running `composer run cs-fix`.
+The most common errors can be automatically fixed just by running `composer run code-style-fix`.
 
 [coding standard homepage]: https://github.com/doctrine/coding-standard
 
