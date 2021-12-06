@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file. See
 [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.0](https://github.com/MacPaw/BehatMessengerContext/compare/v1.1.0...v1.2.0) (2021-12-06)
+
+
+### Features
+
+* add build php 81 ([d14a95c](https://github.com/MacPaw/BehatMessengerContext/commit/d14a95c4dd6cf8feaaab1123b677cdd875fe73f3))
+* add build symfony version 6 ([6967b7f](https://github.com/MacPaw/BehatMessengerContext/commit/6967b7f2cd4f275493d41539e7f1713f4d82d823))
+* add commit lint ([fbd1422](https://github.com/MacPaw/BehatMessengerContext/commit/fbd142231f8d6a0f2ab08016844ffc1e160318a0))
+* add composer validate ([2b8183b](https://github.com/MacPaw/BehatMessengerContext/commit/2b8183b6ffc07044078712aeb2b42ad903f3fefc))
+* add contributing doc ([ac73daa](https://github.com/MacPaw/BehatMessengerContext/commit/ac73daa7ad5994c272791a4e521230f0c1f180f4))
+* add created release automatically ([7f71966](https://github.com/MacPaw/BehatMessengerContext/commit/7f71966d10bba8b94e3d9aaa144fac678f0439d7))
+* add npm deps ([d099198](https://github.com/MacPaw/BehatMessengerContext/commit/d099198cf64ca6e69e0e26421c734d81f4403697))
+* add release ([558d467](https://github.com/MacPaw/BehatMessengerContext/commit/558d467418de7cfaae5d93c2d4048d62d342e7f5))
+* add run code cov ([657da02](https://github.com/MacPaw/BehatMessengerContext/commit/657da025e8e14048809ced5ea2e7af696f1993f8))
+* add security doc ([807c4e7](https://github.com/MacPaw/BehatMessengerContext/commit/807c4e70b41e802051b321365e3f431c9fd0d396))
+* add security doc ([37b0bdd](https://github.com/MacPaw/BehatMessengerContext/commit/37b0bdd3885eb5a38702700e87b7b191f0446e7a))
+* add support symfony 6 ([21e8d09](https://github.com/MacPaw/BehatMessengerContext/commit/21e8d09a64642ed12b01d26444c677d9721c2abe))
+
+
+### Bug Fixes
+
+* build symfony differed  version ([1b4771e](https://github.com/MacPaw/BehatMessengerContext/commit/1b4771ebe7b40bdd7f1fb8deb5934856b6863859))
+
 ## [1.1.0](https://github.com/MacPaw/BehatMessengerContext/compare/v1.0.1...v1.1.0) (2021-09-08)
 
 
