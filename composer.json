@@ -48,6 +48,7 @@
         }
     },
     "scripts": {
+        "composer-validate": "composer validate",
         "phpstan": "./vendor/bin/phpstan analyse -l max",
         "code-style": "./vendor/bin/phpcs",
         "code-style-fix": "./vendor/bin/phpcbf",
