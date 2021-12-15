@@ -4,3 +4,4 @@
 /.phpunit.result.cache
 /package-lock.json
 /node_modules/
+/.idea/
