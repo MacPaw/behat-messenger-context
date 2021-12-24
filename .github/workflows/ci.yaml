@@ -14,6 +14,7 @@ jobs:
                 php:
                     - '7.4'
                     - '8.0'
+                    - '8.1'
                 coverage: ['none']
                 symfony-versions:
                     - '4.4.*'
@@ -21,6 +22,12 @@ jobs:
                     - '5.2.*'
                     - '5.3.*'
                 include:
+                    - php: '8.0'
+                      symfony-versions: '^6.0'
+                      coverage: 'none'
+                    - php: '8.1'
+                      symfony-versions: '^6.0'
+                      coverage: 'none'
                     - description: 'Log Code Coverage'
                       php: '8.0'
                       coverage: 'xdebug'
@@ -56,8 +63,11 @@ jobs:
                   key: ${{ runner.os }}-${{ matrix.php }}-${{ matrix.symfony-versions }}-composer-${{ hashFiles('composer.json') }}
                   restore-keys: ${{ runner.os }}-${{ matrix.php }}-${{ matrix.symfony-versions }}-composer
 
-            - name: Install dependencies
-              run: composer require "symfony/symfony:${{ matrix.symfony-versions }}" --no-update
+            - name: Update Symfony version
+              if: matrix.symfony-versions != ''
+              run: |
+                  composer require symfony/messenger:${{ matrix.symfony-versions }} --no-update --no-scripts
+                  composer require symfony/serializer:${{ matrix.symfony-versions }} --no-update --no-scripts
 
             - name: Install dependencies
               run: composer install
