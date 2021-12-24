@@ -5,10 +5,11 @@
 | Version | Supported          |
 | ------- | ------------------ |
 | 0.x.x   | :white_check_mark: |
+| 1.x.x   | :white_check_mark: |
 
 ## Reporting a Bug
 
-Report security bugs by emailing the lead maintainer at yozhef@macpaw.com or create [Issues](https://github.com/MacPaw/symfony-health-check-bundle/issues)
+Report security bugs by emailing the lead maintainer at yozhef@macpaw.com or create [Issues](https://github.com/MacPaw/BehatMessengerContext/issues)
 
 ## Reporting a Vulnerability
 
