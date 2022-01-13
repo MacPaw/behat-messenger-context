@@ -1,5 +1,5 @@
 {
-    "name": "macpaw/behat-messenger-bundle",
+    "name": "macpaw/behat-messenger-context",
     "type": "symfony-bundle",
     "description": "Behat Context for testing Symfony Messenger component",
     "keywords": [
@@ -21,7 +21,7 @@
             "name": "Yozhef Hisem",
             "email": "hisemjo@gmail.com",
             "homepage": "https://macpaw.com/",
-            "role": "Senior Software Engineer"
+            "role": "Software Engineer"
         }
     ],
     "license": "MIT",
