@@ -28,8 +28,8 @@
     "require": {
         "php": "^7.4 || ^8.0",
         "behat/behat": "^3.0",
-        "symfony/messenger": "^4.4 || ^5.0",
-        "symfony/serializer": "^4.4 || ^5.0",
+        "symfony/messenger": "^4.4 || ^5.0 || ^6.0",
+        "symfony/serializer": "^4.4 || ^5.0 || ^6.0",
         "symfony/dependency-injection": "^4.4 || ^5.4 || ^6.0",
         "symfony/http-kernel": "^4.4 || ^5.4 || ^6.0"
     },
@@ -50,6 +50,7 @@
         }
     },
     "scripts": {
+        "composer-validate": "composer validate",
         "phpstan": "./vendor/bin/phpstan analyse -l max",
         "code-style": "./vendor/bin/phpcs",
         "code-style-fix": "./vendor/bin/phpcbf",

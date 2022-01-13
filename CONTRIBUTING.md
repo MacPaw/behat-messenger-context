@@ -40,6 +40,12 @@ You can run the unit-tests by calling `composer run phpunit`.
 
 New features without tests can't be merged.
 
+## Conventional Commits specification
+
+We are using husky pre-commit hook to check commit naming compliance with Conventional Commits convention.
+You have to run `npm install` after cloning project and then all commit naming errors (if any) will be shown in console.
+It helps us to create explicit commit history and automate release flow. 
+
 ## Issues and Bugs
 
 To create a new issue, you can use the GitHub issue tracking system.
