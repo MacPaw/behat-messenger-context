@@ -68,6 +68,8 @@ jobs:
               run: |
                   composer require symfony/messenger:${{ matrix.symfony-versions }} --no-update --no-scripts
                   composer require symfony/serializer:${{ matrix.symfony-versions }} --no-update --no-scripts
+                  composer require symfony/dependency-injection:${{ matrix.symfony-versions }} --no-update --no-scripts
+                  composer require symfony/http-kernel:${{ matrix.symfony-versions }} --no-update --no-scripts
 
             - name: Install dependencies
               run: composer install
