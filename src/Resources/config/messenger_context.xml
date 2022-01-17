@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance"
+    xsd:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service public="true" autowire="true" id="BehatMessengerContext\Context\MessengerContext" class="BehatMessengerContext\Context\MessengerContext">
+            <argument key="$container" type="service" id="test.service_container"/>
+        </service>
+    </services>
+</container>
