@@ -40,4 +40,5 @@
     <rule ref="Squiz.Arrays.ArrayBracketSpacing"/>
 
     <file>src/</file>
+    <file>tests/</file>
 </ruleset>

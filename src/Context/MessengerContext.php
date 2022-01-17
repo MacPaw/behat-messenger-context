@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace BehatMessengerContext\Context;
 
-use BehatMessengerContext\Context\Traits\ArraySimilarTrait;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Exception;
+use SimilarArrays\SimilarArray;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\InMemoryTransport;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class MessengerContext implements Context
+class MessengerContext extends SimilarArray implements Context
 {
-    use ArraySimilarTrait;
-
     private ContainerInterface $container;
     private NormalizerInterface $normalizer;
 

@@ -1,4 +1,4 @@
-Behat Messenger Context
+Behat Messenger Context Bundle
 =================================
 
 | Version | Build Status | Code Coverage |
@@ -9,7 +9,7 @@ Behat Messenger Context
 Installation
 ============
 
-Step 1: Install Context
+Step 1: Install Bundle
 ----------------------------------
 Open a command console, enter your project directory and execute:
 
@@ -17,18 +17,7 @@ Open a command console, enter your project directory and execute:
 $ composer require --dev macpaw/behat-messenger-context
 ```
 
-Step 2: Update Container config to load Messenger Context
-----------------------------------
-In the `config/services_test.yaml` file of your project:
-
-```
-    BehatMessengerContext\:
-        resource: '../vendor/macpaw/behat-messenger-context/src/*'
-        arguments:
-            - '@test.service_container'
-```
-
-Step 3: Configure Messenger 
+Step 2: Configure Messenger
 =============
 Copying `config/packages/dev/messenger.yaml` and pasting that into `config/packages/test/`. This gives us messenger configuration that will only be used in the test environment. Uncomment the code, and replace sync with in-memory. Do that for both of the transports.
 
@@ -43,7 +32,7 @@ framework:
 ```
 
 
-Step 4: Configure Behat
+Step 3: Configure Behat
 =============
 Go to `behat.yml`
 
