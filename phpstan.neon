@@ -1,0 +1,6 @@
+parameters:
+    excludes_analyse:
+    paths:
+        - src
+    level: 5
+    treatPhpDocTypesAsCertain: false

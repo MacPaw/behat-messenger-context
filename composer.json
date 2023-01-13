@@ -35,7 +35,7 @@
         "macpaw/similar-arrays": "^1.0"
     },
     "require-dev": {
-        "phpstan/phpstan": "^0.12",
+        "phpstan/phpstan": "^1.9",
         "phpunit/phpunit": "^9.3",
         "slevomat/coding-standard": "^7.0",
         "squizlabs/php_codesniffer": "^3.6"
@@ -52,7 +52,7 @@
     },
     "scripts": {
         "composer-validate": "composer validate",
-        "phpstan": "./vendor/bin/phpstan analyse -l max",
+        "phpstan": "./vendor/bin/phpstan analyse",
         "code-style": "./vendor/bin/phpcs",
         "code-style-fix": "./vendor/bin/phpcbf",
         "phpunit": "./vendor/bin/phpunit",
@@ -62,5 +62,10 @@
             "@code-style",
             "@phpunit"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }
