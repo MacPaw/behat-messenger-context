@@ -83,11 +83,11 @@ Go to `behat.yml`
 ...
 ```
 
-[master Build Status]: https://github.com/macpaw/BehatMessengerContext/actions?query=workflow%3ACI+branch%3Amaster
-[master Build Status Image]: https://github.com/macpaw/BehatMessengerContext/workflows/CI/badge.svg?branch=master
-[develop Build Status]: https://github.com/macpaw/BehatMessengerContext/actions?query=workflow%3ACI+branch%3Adevelop
-[develop Build Status Image]: https://github.com/macpaw/BehatMessengerContext/workflows/CI/badge.svg?branch=develop
-[master Code Coverage]: https://codecov.io/gh/macpaw/BehatMessengerContext/branch/master
-[master Code Coverage Image]: https://img.shields.io/codecov/c/github/macpaw/BehatMessengerContext/master?logo=codecov
-[develop Code Coverage]: https://codecov.io/gh/macpaw/BehatMessengerContext/branch/develop
-[develop Code Coverage Image]: https://img.shields.io/codecov/c/github/macpaw/BehatMessengerContext/develop?logo=codecov
+[master Build Status]: https://github.com/macpaw/behat-messenger-context/actions?query=workflow%3ACI+branch%3Amaster
+[master Build Status Image]: https://github.com/macpaw/behat-messenger-context/workflows/CI/badge.svg?branch=master
+[develop Build Status]: https://github.com/macpaw/behat-messenger-context/actions?query=workflow%3ACI+branch%3Adevelop
+[develop Build Status Image]: https://github.com/macpaw/behat-messenger-context/workflows/CI/badge.svg?branch=develop
+[master Code Coverage]: https://codecov.io/gh/macpaw/behat-messenger-context/branch/master
+[master Code Coverage Image]: https://img.shields.io/codecov/c/github/macpaw/behat-messenger-context/master?logo=codecov
+[develop Code Coverage]: https://codecov.io/gh/macpaw/behat-messenger-context/branch/develop
+[develop Code Coverage Image]: https://img.shields.io/codecov/c/github/macpaw/behat-messenger-context/develop?logo=codecov
