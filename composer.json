@@ -62,5 +62,10 @@
             "@code-style",
             "@phpunit"
         ]
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }
