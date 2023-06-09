@@ -9,7 +9,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Exception;
 use SimilarArrays\SimilarArray;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\Messenger\Transport\InMemoryTransport;
+use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class MessengerContext extends SimilarArray implements Context
