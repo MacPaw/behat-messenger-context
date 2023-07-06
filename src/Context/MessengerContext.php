@@ -210,7 +210,7 @@ class MessengerContext implements Context
         }
 
         if (\class_exists(TestTransport::class) && $transport instanceof TestTransport) {
-            return $transport->dispatched();
+            return $transport->queue();
         }
 
         throw new Exception('Unknown transport ' . $transportName);
