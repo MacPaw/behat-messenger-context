@@ -25,7 +25,9 @@ In the `config/services_test.yaml` file of your project:
     BehatMessengerContext\:
         resource: '../vendor/macpaw/behat-messenger-context/src/*'
         arguments:
-            - '@test.service_container'
+            $container: '@test.service_container'
+            $placeholderPatternMap:
+                'datetime_atom': '/\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2]\d|3[0-1])T[0-2]\d:[0-5]\d:[0-5]\d[+-][0-2]\d:[0-5]\d/'
 ```
 
 Step 3: Configure Messenger 

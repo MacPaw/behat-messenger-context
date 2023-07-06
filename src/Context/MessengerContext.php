@@ -10,7 +10,9 @@ use Behat\Gherkin\Node\PyStringNode;
 use Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\InMemoryTransport;
+use Symfony\Component\Messenger\Transport\TransportInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Zenstruck\Messenger\Test\Transport\TestTransport;
 
 class MessengerContext implements Context
 {
@@ -18,13 +20,22 @@ class MessengerContext implements Context
 
     private ContainerInterface $container;
     private NormalizerInterface $normalizer;
+    /** @var array<string, string> */
+    private array $placeholderPatternMap;
 
+    /**
+     * @param ContainerInterface $container
+     * @param NormalizerInterface $normalizer
+     * @param array<string, string> $placeholderPatternMap
+     */
     public function __construct(
         ContainerInterface $container,
-        NormalizerInterface $normalizer
+        NormalizerInterface $normalizer,
+        array $placeholderPatternMap = []
     ) {
         $this->container = $container;
         $this->normalizer = $normalizer;
+        $this->placeholderPatternMap = $placeholderPatternMap;
     }
 
     /**
@@ -34,11 +45,10 @@ class MessengerContext implements Context
     {
         $expectedMessage = $this->decodeExpectedJson($expectedMessage);
 
-        $transport = $this->getMessengerTransportByName($transportName);
         $actualMessageList = [];
-        foreach ($transport->get() as $envelope) {
+        foreach ($this->getEnvelopesFromTransport($transportName) as $envelope) {
             $actualMessage = $this->convertToArray($envelope->getMessage());
-            if ($this->isArraysSimilar($actualMessage, $expectedMessage)) {
+            if ($this->isArraysSimilar($expectedMessage, $actualMessage)) {
                 return;
             }
 
@@ -64,11 +74,16 @@ class MessengerContext implements Context
         $variableFields = $variableFields ? array_map('trim', explode(',', $variableFields)) : [];
         $expectedMessage = $this->decodeExpectedJson($expectedMessage);
 
-        $transport = $this->getMessengerTransportByName($transportName);
         $actualMessageList = [];
-        foreach ($transport->get() as $envelope) {
+        foreach ($this->getEnvelopesFromTransport($transportName) as $envelope) {
             $actualMessage = $this->convertToArray($envelope->getMessage());
-            if ($this->isArraysSimilar($actualMessage, $expectedMessage, $variableFields)) {
+            $isArraysSimilar = $this->isArraysSimilar(
+                $expectedMessage,
+                $actualMessage,
+                $variableFields,
+                $this->placeholderPatternMap
+            );
+            if ($isArraysSimilar) {
                 return;
             }
 
@@ -90,13 +105,12 @@ class MessengerContext implements Context
     {
         $expectedMessageList = $this->decodeExpectedJson($expectedMessageList);
 
-        $transport = $this->getMessengerTransportByName($transportName);
         $actualMessageList = [];
-        foreach ($transport->get() as $envelope) {
+        foreach ($this->getEnvelopesFromTransport($transportName) as $envelope) {
             $actualMessageList[] = $this->convertToArray($envelope->getMessage());
         }
 
-        if (!$this->isArraysSimilar($actualMessageList, $expectedMessageList)) {
+        if (!$this->isArraysSimilar($expectedMessageList, $actualMessageList)) {
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',
@@ -117,13 +131,18 @@ class MessengerContext implements Context
         $variableFields = $variableFields ? array_map('trim', explode(',', $variableFields)) : [];
         $expectedMessageList = $this->decodeExpectedJson($expectedMessageList);
 
-        $transport = $this->getMessengerTransportByName($transportName);
         $actualMessageList = [];
-        foreach ($transport->get() as $envelope) {
+        foreach ($this->getEnvelopesFromTransport($transportName) as $envelope) {
             $actualMessageList[] = $this->convertToArray($envelope->getMessage());
         }
 
-        if (!$this->isArraysSimilar($actualMessageList, $expectedMessageList, $variableFields)) {
+        $isArraysSimilar = $this->isArraysSimilar(
+            $expectedMessageList,
+            $actualMessageList,
+            $variableFields,
+            $this->placeholderPatternMap
+        );
+        if (!$isArraysSimilar) {
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',
@@ -138,8 +157,7 @@ class MessengerContext implements Context
      */
     public function thereIsCountMessagesInTransport(int $expectedMessageCount, string $transportName): void
     {
-        $transport = $this->getMessengerTransportByName($transportName);
-        $actualMessageCount = count($transport->get());
+        $actualMessageCount = count($this->getEnvelopesFromTransport($transportName));
 
         if ($actualMessageCount !== $expectedMessageCount) {
             throw new Exception(
@@ -183,7 +201,22 @@ class MessengerContext implements Context
         );
     }
 
-    private function getMessengerTransportByName(string $transportName): InMemoryTransport
+    private function getEnvelopesFromTransport(string $transportName): iterable
+    {
+        $transport = $this->getMessengerTransportByName($transportName);
+
+        if ($transport instanceof InMemoryTransport) {
+            return $transport->get();
+        }
+
+        if (\class_exists(TestTransport::class) && $transport instanceof TestTransport) {
+            return $transport->dispatched();
+        }
+
+        throw new Exception('Unknown transport ' . $transportName);
+    }
+
+    private function getMessengerTransportByName(string $transportName): TransportInterface
     {
         $fullName = 'messenger.transport.' . $transportName;
         $hasTransport = $this->container->has($fullName);
@@ -195,6 +228,10 @@ class MessengerContext implements Context
         $transport = $this->container->get($fullName);
 
         if ($transport instanceof InMemoryTransport) {
+            return $transport;
+        }
+
+        if (\class_exists(TestTransport::class) && $transport instanceof TestTransport) {
             return $transport;
         }
 
