@@ -4,5 +4,3 @@ parameters:
         - src
     level: 8
     treatPhpDocTypesAsCertain: false
-    ignoreErrors:
-        - '#Parameter \#1 \$value of function count expects array|Countable, iterable<Symfony\\Component\\Messenger\\Envelope> given.*#'

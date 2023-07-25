@@ -8,10 +8,15 @@ use BehatMessengerContext\Context\Traits\ArraySimilarTrait;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Exception;
+use Illuminate\Support\Collection;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport as BaseInMemoryTransport;
 use Symfony\Component\Messenger\Transport\InMemoryTransport;
 use Symfony\Component\Messenger\Transport\TransportInterface;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Zenstruck\Messenger\Test\EnvelopeCollection;
 use Zenstruck\Messenger\Test\Transport\TestTransport;
 
 class MessengerContext implements Context
@@ -40,6 +45,7 @@ class MessengerContext implements Context
 
     /**
      * @Then transport :transportName should contain message with JSON:
+     * @throws \JsonException | Exception
      */
     public function transportShouldContainMessageWithJson(string $transportName, PyStringNode $expectedMessage): void
     {
@@ -65,6 +71,8 @@ class MessengerContext implements Context
 
     /**
      * @Then transport :transportName should contain message with JSON and variable fields :variableFields:
+     * @throws \JsonException
+     * @throws Exception
      */
     public function transportShouldContainMessageWithJsonAndVariableFields(
         string $transportName,
@@ -100,6 +108,7 @@ class MessengerContext implements Context
 
     /**
      * @Then all transport :transportName messages should be JSON:
+     * @throws \JsonException | Exception
      */
     public function allTransportMessagesShouldBeJson(string $transportName, PyStringNode $expectedMessageList): void
     {
@@ -122,6 +131,7 @@ class MessengerContext implements Context
 
     /**
      * @Then all transport :transportName messages should be JSON with variable fields :variableFields:
+     * @throws \JsonException | Exception
      */
     public function allTransportMessagesShouldBeJsonWithVariableFields(
         string $transportName,
@@ -154,10 +164,11 @@ class MessengerContext implements Context
 
     /**
      * @Then there is :expectationMessageCount messages in transport :transportName
+     * @throws Exception
      */
     public function thereIsCountMessagesInTransport(int $expectedMessageCount, string $transportName): void
     {
-        $actualMessageCount = count($this->getEnvelopesFromTransport($transportName));
+        $actualMessageCount = count(new Collection($this->getEnvelopesFromTransport($transportName)));
 
         if ($actualMessageCount !== $expectedMessageCount) {
             throw new Exception(
@@ -172,9 +183,8 @@ class MessengerContext implements Context
 
     /**
      * @param array<mixed> $message
-     * @return string|bool
      */
-    private function getPrettyJson(array $message)
+    private function getPrettyJson(array $message): bool|string
     {
         return json_encode($message, JSON_PRETTY_PRINT);
     }
@@ -182,6 +192,7 @@ class MessengerContext implements Context
     /**
      * @param mixed $object
      * @return array<mixed>
+     * @throws ExceptionInterface
      */
     private function convertToArray($object): array
     {
@@ -190,22 +201,28 @@ class MessengerContext implements Context
 
     /**
      * @return array<mixed>
+     * @throws \JsonException
      */
     private function decodeExpectedJson(PyStringNode $expectedJson): array
     {
-        return json_decode(
+        $result =  json_decode(
             trim($expectedJson->getRaw()),
             true,
             512,
             JSON_THROW_ON_ERROR
         );
+        return is_array($result) ? $result : [];
     }
 
+    /**
+     * @return Envelope[]|EnvelopeCollection
+     * @throws Exception
+     */
     private function getEnvelopesFromTransport(string $transportName): iterable
     {
         $transport = $this->getMessengerTransportByName($transportName);
 
-        if ($transport instanceof InMemoryTransport) {
+        if ($transport instanceof BaseInMemoryTransport) {
             return $transport->get();
         }
 
@@ -227,7 +244,7 @@ class MessengerContext implements Context
 
         $transport = $this->container->get($fullName);
 
-        if ($transport instanceof InMemoryTransport) {
+        if ($transport instanceof BaseInMemoryTransport) {
             return $transport;
         }
 

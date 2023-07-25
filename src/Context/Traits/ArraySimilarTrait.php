@@ -7,10 +7,11 @@ namespace BehatMessengerContext\Context\Traits;
 trait ArraySimilarTrait
 {
     /**
-     * @param array<mixed>  $expected
-     * @param array<mixed>  $actual
+     * @param array<mixed> $expected
+     * @param array<mixed> $actual
      * @param array<string> $variableFields
      * @param array<string, string> $placeholderPatternMap
+     * @return bool
      */
     protected function isArraysSimilar(
         array $expected,
@@ -43,10 +44,10 @@ trait ArraySimilarTrait
                 }
 
                 $isPlaceholder = !empty($placeholderPatternMap)
-                    && strpos($value, '{') === 0
-                    && \substr($value, -1) === '}';
+                    && str_starts_with($value, '{')
+                    && str_ends_with($value, '}');
 
-                if (strpos($value, '~') !== 0 && !$isPlaceholder) {
+                if (! str_starts_with($value, '~') && !$isPlaceholder) {
                     return false;
                 }
 
@@ -57,7 +58,7 @@ trait ArraySimilarTrait
                     $pattern = $placeholderPatternMap[$placeholder];
                 }
 
-                if (!preg_match($pattern, $actual[$key])) {
+                if (!preg_match($pattern, $actual[$key])) {//@phpstan-ignore
                     return false;
                 }
             }
