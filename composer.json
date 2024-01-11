@@ -28,10 +28,10 @@
     "require": {
         "php": "^8.2",
         "behat/behat": "^3.0",
-        "symfony/messenger": "^6.3",
-        "symfony/serializer": "^6.3",
-        "symfony/dependency-injection": "^6.3",
-        "symfony/http-kernel": "^6.3",
+        "symfony/messenger": "^6.3 || ^7.0",
+        "symfony/serializer": "^6.3 || ^7.0",
+        "symfony/dependency-injection": "^6.3 || ^7.0",
+        "symfony/http-kernel": "^6.3 || ^7.0",
         "macpaw/similar-arrays": "^1.0"
     },
     "require-dev": {
