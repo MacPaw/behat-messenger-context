@@ -14,15 +14,10 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class MessengerContext extends SimilarArray implements Context
 {
-    private ContainerInterface $container;
-    private NormalizerInterface $normalizer;
-
     public function __construct(
-        ContainerInterface $container,
-        NormalizerInterface $normalizer
+        private readonly ContainerInterface $container,
+        private readonly NormalizerInterface $normalizer
     ) {
-        $this->container = $container;
-        $this->normalizer = $normalizer;
     }
 
     /**
