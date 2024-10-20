@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BehatMessengerContext\Tests\Context;
+namespace BehatMessengerContext\Tests;
 
 use Behat\Gherkin\Node\PyStringNode;
 use BehatMessengerContext\Context\MessengerContext;
