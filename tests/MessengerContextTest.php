@@ -15,6 +15,7 @@ use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use BehatMessengerContext\Context\TransportRetriever;
 use Exception;
+use Symfony\Contracts\Service\ServiceProviderInterface;
 
 class MessengerContextTest extends TestCase
 {
@@ -48,15 +49,13 @@ class MessengerContextTest extends TestCase
 
     public function testClearMessenger(): void
     {
-        $this->container
+        $serviceProvider = $this->createMock(ServiceProviderInterface::class);
+        $serviceProvider
             ->expects($this->once())
-            ->method('getServiceIds')
+            ->method('getProvidedServices')
             ->willReturn(['messenger.transport.test']);
-        $this->container
-            ->expects(self::once())
-            ->method('has')
-            ->willReturn(true);
-        $this->container
+
+        $serviceProvider
             ->expects(self::once())
             ->method('get')
             ->willReturn($this->inMemoryTransport);
@@ -68,7 +67,7 @@ class MessengerContextTest extends TestCase
         (new MessengerContext(
             $this->container,
             $this->normalizer,
-            new TransportRetriever($this->container),
+            new TransportRetriever($serviceProvider),
         ))->clearMessenger();
     }
 
