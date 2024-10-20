@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class MessengerContext extends SimilarArray implements Context
+class MessengerContext implements Context
 {
     public function __construct(
         private readonly ContainerInterface $container,
@@ -75,7 +75,7 @@ class MessengerContext extends SimilarArray implements Context
         $actualMessageList = [];
         foreach ($transport->get() as $envelope) {
             $actualMessage = $this->convertToArray($envelope->getMessage());
-            if ($this->isArraysSimilar($expectedMessage, $actualMessage, $variableFields)) {
+            if ($this->isMessagesAreSimilar($expectedMessage, $actualMessage, $variableFields)) {
                 return;
             }
 
@@ -103,7 +103,7 @@ class MessengerContext extends SimilarArray implements Context
             $actualMessageList[] = $this->convertToArray($envelope->getMessage());
         }
 
-        if (!$this->isArraysSimilar($expectedMessageList, $actualMessageList)) {
+        if (!$this->isMessagesAreSimilar($expectedMessageList, $actualMessageList)) {
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',
@@ -130,7 +130,7 @@ class MessengerContext extends SimilarArray implements Context
             $actualMessageList[] = $this->convertToArray($envelope->getMessage());
         }
 
-        if (!$this->isArraysSimilar($expectedMessageList, $actualMessageList, $variableFields)) {
+        if (!$this->isMessagesAreSimilar($expectedMessageList, $actualMessageList, $variableFields)) {
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',
@@ -208,5 +208,41 @@ class MessengerContext extends SimilarArray implements Context
         throw new Exception(
             'In memory transport ' . $fullName . ' not found'
         );
+    }
+
+    /**
+     * @param array $actual<mixed>
+     * @param array $expected<mixed>
+     * @param string[]|null $requiredFields
+     *
+     * @return bool
+     */
+    private function isMessagesAreSimilar(
+        array $actual,
+        array $expected,
+        ?array $requiredFields = null,
+    ): bool {
+        $requiredFields = $requiredFields ?? array_keys($expected);
+
+        foreach ($requiredFields as $requiredField) {
+            if (!isset($actual[$requiredField])) {
+                return false;
+            }
+
+            if (!isset($expected[$requiredField])) {
+                return false;
+            }
+
+            if (is_string($expected[$requiredField]) && str_starts_with('~', $expected[$requiredField])) {
+                $pregMatchValue = preg_match(
+                    sprintf('|%s|', substr($expected[$requiredField], 1)),
+                    sprintf('%s', $actual[$requiredField])
+                );
+
+                return !($pregMatchValue === 0 || $pregMatchValue === false);
+            }
+
+            return $actual[$requiredField] === $expected[$requiredField];
+        }
     }
 }
