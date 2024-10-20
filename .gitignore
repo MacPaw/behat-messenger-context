@@ -5,3 +5,5 @@
 /node_modules/
 /.idea/
 /package-lock.json
+/reports
+/clover.xml

@@ -29,6 +29,9 @@ You can use regular expressions to validate messages that contain dynamic or var
 ### Verify Message Count in a Transport
 Ensure that a specific number of messages exist in a given transport.
 
+### Auto clean queue messages before scenario
+Check details in [documentation](docs/MessengerContext/clear_transport_with_zentruck.md)
+
 * Documentation: [Count Messages in Transport](docs/MessengerContext/count_message_transport.md)
 
 [master Build Status]: https://github.com/macpaw/behat-messenger-context/actions?query=workflow%3ACI+branch%3Amaster
