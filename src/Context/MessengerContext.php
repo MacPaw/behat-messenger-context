@@ -51,7 +51,7 @@ class MessengerContext implements Context
         $actualMessageList = [];
         foreach ($transport->get() as $envelope) {
             $actualMessage = $this->convertToArray($envelope->getMessage());
-            if ($this->isArraysSimilar($expectedMessage, $actualMessage)) {
+            if ($this->isMessagesAreSimilar($expectedMessage, $actualMessage)) {
                 return;
             }
 
