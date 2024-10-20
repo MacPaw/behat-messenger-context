@@ -51,16 +51,8 @@ We also support auto clear message queue with [zenstruck/messenger-test](https:/
                     async: test://
     ```
 
-## Transport
-
-You can interact with the test transports in your tests by using the
-`InteractsWithMessenger` trait in your `KernelTestCase`/`WebTestCase` tests.
-You can assert the different steps of message processing by asserting on the queue
-and the different states of message processing like "acknowledged", "rejected" and so on.
-
-> **Note**: If you only need to know if a message has been dispatched you can
-> make assertions [on the bus itself](#bus).
-
 More details you can see in [origin package repository](https://github.com/zenstruck/messenger-test)
 
-Zentruck will be used automatically after installation.
+> **Note**:Zentruck will be used automatically after installation.
+
+
