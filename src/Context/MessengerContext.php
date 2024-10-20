@@ -15,18 +15,11 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class MessengerContext extends SimilarArray implements Context
 {
-    private ContainerInterface $container;
-    private NormalizerInterface $normalizer;
-    private TransportRetriever $transportRetriever;
-
     public function __construct(
-        ContainerInterface $container,
-        NormalizerInterface $normalizer,
-        TransportRetriever $transportRetriever,
+        private readonly ContainerInterface $container,
+        private readonly NormalizerInterface $normalizer
+        private readonly TransportRetriever $transportRetriever,
     ) {
-        $this->container = $container;
-        $this->normalizer = $normalizer;
-        $this->transportRetriever = $transportRetriever;
     }
 
     #[BeforeScenario]
