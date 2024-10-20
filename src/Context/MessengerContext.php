@@ -6,32 +6,22 @@ namespace BehatMessengerContext\Context;
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
-use Behat\Hook\BeforeScenario;
 use Exception;
-use SimilarArrays\SimilarArray;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class MessengerContext implements Context
 {
+    private ContainerInterface $container;
+    private NormalizerInterface $normalizer;
+
     public function __construct(
-        private readonly ContainerInterface $container,
-        private readonly NormalizerInterface $normalizer
-        private readonly TransportRetriever $transportRetriever,
+        ContainerInterface $container,
+        NormalizerInterface $normalizer
     ) {
-    }
-
-    #[BeforeScenario]
-    public function clearMessenger(): void
-    {
-        $transports = $this->transportRetriever->getAllTransports();
-
-        foreach ($transports as $transport) {
-            if ($transport instanceof InMemoryTransport) {
-                $transport->reset();
-            }
-        }
+        $this->container = $container;
+        $this->normalizer = $normalizer;
     }
 
     /**
@@ -244,5 +234,7 @@ class MessengerContext implements Context
 
             return $actual[$requiredField] === $expected[$requiredField];
         }
+
+        return false;
     }
 }
