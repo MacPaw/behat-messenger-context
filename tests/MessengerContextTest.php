@@ -332,7 +332,7 @@ class MessengerContextTest extends TestCase
             ->with($message)
             ->willReturn(['key' => 'value']);
 
-        $expectedJson = new PyStringNode(['[{"key": "value"}]'], 1);
+        $expectedJson = new PyStringNode(['{"key": "value"}'], 1);
 
         $this->messengerContext->allTransportMessagesShouldBeJson('test', $expectedJson);
     }

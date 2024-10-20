@@ -110,7 +110,11 @@ class MessengerContext implements Context
             $actualMessageList[] = $this->convertToArray($envelope->getMessage());
         }
 
-        if (!$this->isMessagesAreSimilar($expectedMessageList, $actualMessageList)) {
+        if (!$this->isMessagesAreSimilar(
+            expected: $expectedMessageList,
+            actual: $actualMessageList,
+            multipleActual: true,
+        )) {
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',
@@ -137,7 +141,12 @@ class MessengerContext implements Context
             $actualMessageList[] = $this->convertToArray($envelope->getMessage());
         }
 
-        if (!$this->isMessagesAreSimilar($expectedMessageList, $actualMessageList, $variableFields, true)) {
+        if (!$this->isMessagesAreSimilar(
+            expected: $expectedMessageList,
+            actual: $actualMessageList,
+            requiredFields: $variableFields,
+            multipleActual: true,
+        )) {
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',
