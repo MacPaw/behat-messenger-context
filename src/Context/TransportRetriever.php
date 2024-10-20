@@ -7,15 +7,16 @@ namespace BehatMessengerContext\Context;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\TransportInterface;
+use Symfony\Contracts\Service\ServiceProviderInterface;
 
 class TransportRetriever
 {
-    /** @var ContainerInterface */
-    private ContainerInterface $container;
+    private ServiceProviderInterface $receiverLocator;
 
-    public function __construct(ContainerInterface $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        ServiceProviderInterface $receiverLocator,
+    ) {
+        $this->receiverLocator = $receiverLocator;
     }
 
     /**
@@ -24,16 +25,11 @@ class TransportRetriever
     public function getAllTransports(): array
     {
         $transports = [];
-        assert($this->container instanceof Container);
 
-        foreach ($this->container->getServiceIds() as $serviceId) {
-            if (
-                str_starts_with($serviceId, 'messenger.transport.') &&
-                $this->container->has($serviceId)
-            ) {
-                $transports[$serviceId] = $this->container->get($serviceId);
-            }
+        foreach ($this->receiverLocator->getProvidedServices() as $name => $service) {
+            $transports[$name] = $this->receiverLocator->get($name);
         }
+
         return $transports;
     }
 }

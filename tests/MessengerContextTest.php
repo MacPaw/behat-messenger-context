@@ -8,6 +8,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use BehatMessengerContext\Context\MessengerContext;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
@@ -33,7 +34,7 @@ class MessengerContextTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->container = $this->createMock(ContainerInterface::class);
+        $this->container = $this->createMock(Container::class);
         $this->normalizer = $this->createMock(NormalizerInterface::class);
         $this->transportRetriever = $this->createMock(TransportRetriever::class);
         $this->inMemoryTransport = $this->createMock(InMemoryTransport::class);
@@ -47,16 +48,28 @@ class MessengerContextTest extends TestCase
 
     public function testClearMessenger(): void
     {
-        $this->transportRetriever
+        $this->container
             ->expects($this->once())
-            ->method('getAllTransports')
-            ->willReturn([$this->inMemoryTransport]);
+            ->method('getServiceIds')
+            ->willReturn(['messenger.transport.test']);
+        $this->container
+            ->expects(self::once())
+            ->method('has')
+            ->willReturn(true);
+        $this->container
+            ->expects(self::once())
+            ->method('get')
+            ->willReturn($this->inMemoryTransport);
 
         $this->inMemoryTransport
             ->expects($this->once())
             ->method('reset');
 
-        $this->messengerContext->clearMessenger();
+        (new MessengerContext(
+            $this->container,
+            $this->normalizer,
+            new TransportRetriever($this->container),
+        ))->clearMessenger();
     }
 
     public function testTransportShouldContainMessageWithJson(): void
@@ -360,7 +373,6 @@ class MessengerContextTest extends TestCase
 
     public function testAllTransportMessagesShouldBeJsonWithVariableFields(): void
     {
-        // Create mock messages
         $message1 = new \stdClass();
         $message1->id = 1;
         $message1->name = 'Test';
@@ -369,15 +381,12 @@ class MessengerContextTest extends TestCase
         $message2->id = 2;
         $message2->name = 'Test';
 
-        // Wrap messages in Envelopes
         $envelope1 = new Envelope($message1);
         $envelope2 = new Envelope($message2);
 
-        // Mock the InMemoryTransport and its `get()` method
         $transport = $this->createMock(InMemoryTransport::class);
         $transport->method('get')->willReturn([$envelope1, $envelope2]);
 
-        // Configure the container to return the mocked transport
         $this->container
             ->expects(self::once())
             ->method('has')
@@ -389,7 +398,6 @@ class MessengerContextTest extends TestCase
             ->with('messenger.transport.test')
             ->willReturn($transport);
 
-        // Configure the normalizer to convert messages to arrays
         $this->normalizer
             ->expects($this->exactly(2))
             ->method('normalize')
@@ -399,10 +407,57 @@ class MessengerContextTest extends TestCase
             );
 
         $expectedJson = new PyStringNode([
-            '[{"id": "~\\d+", "name": "Test"}]'
+            '{"id": "~\\\\d+", "name": "Test"}'
         ], 1);
 
-        // Call the method with variable field "id"
+        $this->messengerContext->allTransportMessagesShouldBeJsonWithVariableFields(
+            'test',
+            'id',
+            $expectedJson
+        );
+    }
+
+    public function testFailAllTransportMessagesShouldBeJsonWithVariableFields(): void
+    {
+        $message1 = new \stdClass();
+        $message1->id = 1;
+        $message1->name = 'Test';
+
+        $message2 = new \stdClass();
+        $message2->id = 2;
+        $message2->name = 'Test';
+
+        $envelope1 = new Envelope($message1);
+        $envelope2 = new Envelope($message2);
+
+        $transport = $this->createMock(InMemoryTransport::class);
+        $transport->method('get')->willReturn([$envelope1, $envelope2]);
+
+        $this->container
+            ->expects(self::once())
+            ->method('has')
+            ->with('messenger.transport.test')
+            ->willReturn(true);
+        $this->container
+            ->expects(self::once())
+            ->method('get')
+            ->with('messenger.transport.test')
+            ->willReturn($transport);
+
+        $this->normalizer
+            ->expects($this->exactly(2))
+            ->method('normalize')
+            ->willReturnOnConsecutiveCalls(
+                ['id' => 1, 'name' => 'Test'],
+                ['id' => 'uuid', 'name' => 'Test']
+            );
+
+        $expectedJson = new PyStringNode([
+            '{"id": "~\\\\d+", "name": "Test"}'
+        ], 1);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('The expected transport messages doesn\'t match actual');
         $this->messengerContext->allTransportMessagesShouldBeJsonWithVariableFields(
             'test',
             'id',

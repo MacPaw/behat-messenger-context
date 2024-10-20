@@ -8,9 +8,9 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Hook\BeforeScenario;
 use Exception;
-use JsonException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
+use Symfony\Component\Messenger\Transport\Sync\SyncTransport;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class MessengerContext implements Context
@@ -62,8 +62,8 @@ class MessengerContext implements Context
         throw new Exception(
             sprintf(
                 'The transport doesn\'t contain message with such JSON, actual messages: %s',
-                $this->getPrettyJson($actualMessageList)
-            )
+                $this->getPrettyJson($actualMessageList),
+            ),
         );
     }
 
@@ -73,7 +73,7 @@ class MessengerContext implements Context
     public function transportShouldContainMessageWithJsonAndVariableFields(
         string $transportName,
         string $variableFields,
-        PyStringNode $expectedMessage
+        PyStringNode $expectedMessage,
     ): void {
         $variableFields = $variableFields ? array_map('trim', explode(',', $variableFields)) : [];
         $expectedMessage = $this->decodeExpectedJson($expectedMessage);
@@ -92,8 +92,8 @@ class MessengerContext implements Context
         throw new Exception(
             sprintf(
                 'The transport doesn\'t contain message with such JSON, actual messages: %s',
-                $this->getPrettyJson($actualMessageList)
-            )
+                $this->getPrettyJson($actualMessageList),
+            ),
         );
     }
 
@@ -114,8 +114,8 @@ class MessengerContext implements Context
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',
-                    $this->getPrettyJson($actualMessageList)
-                )
+                    $this->getPrettyJson($actualMessageList),
+                ),
             );
         }
     }
@@ -126,7 +126,7 @@ class MessengerContext implements Context
     public function allTransportMessagesShouldBeJsonWithVariableFields(
         string $transportName,
         string $variableFields,
-        PyStringNode $expectedMessageList
+        PyStringNode $expectedMessageList,
     ): void {
         $variableFields = $variableFields ? array_map('trim', explode(',', $variableFields)) : [];
         $expectedMessageList = $this->decodeExpectedJson($expectedMessageList);
@@ -137,12 +137,12 @@ class MessengerContext implements Context
             $actualMessageList[] = $this->convertToArray($envelope->getMessage());
         }
 
-        if (!$this->isMessagesAreSimilar($expectedMessageList, $actualMessageList, $variableFields)) {
+        if (!$this->isMessagesAreSimilar($expectedMessageList, $actualMessageList, $variableFields, true)) {
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',
-                    $this->getPrettyJson($actualMessageList)
-                )
+                    $this->getPrettyJson($actualMessageList),
+                ),
             );
         }
     }
@@ -160,14 +160,15 @@ class MessengerContext implements Context
                 sprintf(
                     'In transport exist actual count: %s, but expected count: %s',
                     $actualMessageCount,
-                    $expectedMessageCount
-                )
+                    $expectedMessageCount,
+                ),
             );
         }
     }
 
     /**
      * @param array<mixed> $message
+     *
      * @return string|bool
      */
     private function getPrettyJson(array $message)
@@ -177,11 +178,12 @@ class MessengerContext implements Context
 
     /**
      * @param mixed $object
+     *
      * @return array<mixed>
      */
     private function convertToArray($object): array
     {
-        return (array) $this->normalizer->normalize($object);
+        return (array)$this->normalizer->normalize($object);
     }
 
     /**
@@ -189,16 +191,12 @@ class MessengerContext implements Context
      */
     private function decodeExpectedJson(PyStringNode $expectedJson): array
     {
-        try {
-            return json_decode(
-                trim($expectedJson->getRaw()),
-                true,
-                512,
-                JSON_THROW_ON_ERROR
-            );
-        } catch (JsonException $e) {
-            dd(trim($expectedJson->getRaw()), $expectedJson->getRaw(), $e);
-        }
+        return json_decode(
+            trim($expectedJson->getRaw()),
+            true,
+            512,
+            JSON_THROW_ON_ERROR,
+        );
     }
 
     private function getMessengerTransportByName(string $transportName): InMemoryTransport
@@ -217,22 +215,33 @@ class MessengerContext implements Context
         }
 
         throw new Exception(
-            'In memory transport ' . $fullName . ' not found'
+            'In memory transport ' . $fullName . ' not found',
         );
     }
 
     /**
-     * @param array $actual<mixed>
-     * @param array $expected<mixed>
+     * @param array $actual <mixed>
+     * @param array $expected <mixed>
      * @param string[]|null $requiredFields
      *
      * @return bool
      */
     private function isMessagesAreSimilar(
-        array $actual,
         array $expected,
+        array $actual,
         ?array $requiredFields = null,
+        bool $multipleActual = false,
     ): bool {
+        if ($multipleActual) {
+            foreach ($actual as $nextActualItem) {
+                if (!$this->isMessagesAreSimilar($expected, $nextActualItem, $requiredFields)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         $requiredFields = $requiredFields ?? array_keys($expected);
 
         foreach ($requiredFields as $requiredField) {
@@ -244,10 +253,10 @@ class MessengerContext implements Context
                 return false;
             }
 
-            if (is_string($expected[$requiredField]) && str_starts_with('~', $expected[$requiredField])) {
+            if (is_string($expected[$requiredField]) && str_starts_with($expected[$requiredField], '~')) {
                 $pregMatchValue = preg_match(
                     sprintf('|%s|', substr($expected[$requiredField], 1)),
-                    sprintf('%s', $actual[$requiredField])
+                    sprintf('%s', $actual[$requiredField]),
                 );
 
                 return !($pregMatchValue === 0 || $pregMatchValue === false);
