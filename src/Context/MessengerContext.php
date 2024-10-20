@@ -8,6 +8,7 @@ use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Hook\BeforeScenario;
 use Exception;
+use JsonException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -188,12 +189,16 @@ class MessengerContext implements Context
      */
     private function decodeExpectedJson(PyStringNode $expectedJson): array
     {
-        return json_decode(
-            trim($expectedJson->getRaw()),
-            true,
-            512,
-            JSON_THROW_ON_ERROR
-        );
+        try {
+            return json_decode(
+                trim($expectedJson->getRaw()),
+                true,
+                512,
+                JSON_THROW_ON_ERROR
+            );
+        } catch (JsonException $e) {
+            dd(trim($expectedJson->getRaw()), $expectedJson->getRaw(), $e);
+        }
     }
 
     private function getMessengerTransportByName(string $transportName): InMemoryTransport

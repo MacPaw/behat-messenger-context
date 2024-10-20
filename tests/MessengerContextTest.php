@@ -93,6 +93,41 @@ class MessengerContextTest extends TestCase
         );
     }
 
+    public function testFailTransportShouldContainMessageWithJson(): void
+    {
+        $message = new \stdClass();
+        $expectedMessage = ['key' => 'value'];
+
+        $this->inMemoryTransport
+            ->expects($this->once())
+            ->method('get')
+            ->willReturn([new \Symfony\Component\Messenger\Envelope($message)]);
+
+        $this->container
+            ->expects($this->once())
+            ->method('has')
+            ->with('messenger.transport.test')
+            ->willReturn(true);
+
+        $this->container
+            ->expects($this->once())
+            ->method('get')
+            ->with('messenger.transport.test')
+            ->willReturn($this->inMemoryTransport);
+
+        $this->normalizer
+            ->expects($this->once())
+            ->method('normalize')
+            ->with($message)
+            ->willReturn($expectedMessage);
+
+        $this->expectException(Exception::class);
+        $this->messengerContext->transportShouldContainMessageWithJson(
+            'test',
+            new PyStringNode(['{ "key1": "value" }'], 1)
+        );
+    }
+
     public function testTransportShouldContainMessageWithJsonThrowsException(): void
     {
         $this->expectException(Exception::class);
@@ -244,6 +279,134 @@ class MessengerContextTest extends TestCase
             'test',
             'id,name,timestamp',
             new PyStringNode([json_encode($expectedMessage)], 1)
+        );
+    }
+
+    public function testTransportNotFoundThrowsException(): void
+    {
+        $this->container->method('has')->willReturn(false);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Transport messenger.transport.invalid not found');
+
+        $this->messengerContext->transportShouldContainMessageWithJson('invalid', new PyStringNode([json_encode([])], 1));
+    }
+
+    public function testAllTransportMessagesShouldBeJson(): void
+    {
+        $message = new \stdClass();
+        $message->key = 'value';
+
+        $envelope = new Envelope($message);
+
+        $transport = $this->createMock(InMemoryTransport::class);
+        $transport->method('get')->willReturn([$envelope]);
+
+        $this->container
+            ->expects(self::once())
+            ->method('has')
+            ->with('messenger.transport.test')
+            ->willReturn(true);
+
+        $this->container
+            ->expects(self::once())
+            ->method('get')
+            ->with('messenger.transport.test')
+            ->willReturn($transport);
+
+        $this->normalizer
+            ->method('normalize')
+            ->with($message)
+            ->willReturn(['key' => 'value']);
+
+        $expectedJson = new PyStringNode(['[{"key": "value"}]'], 1);
+
+        $this->messengerContext->allTransportMessagesShouldBeJson('test', $expectedJson);
+    }
+
+    public function testFailAllTransportMessagesShouldBeJson(): void
+    {
+        $message = new \stdClass();
+        $message->key = 'value';
+
+        $envelope = new Envelope($message);
+
+        $transport = $this->createMock(InMemoryTransport::class);
+        $transport->method('get')->willReturn([$envelope]);
+
+        $this->container
+            ->expects(self::once())
+            ->method('has')
+            ->with('messenger.transport.test')
+            ->willReturn(true);
+
+        $this->container
+            ->expects(self::once())
+            ->method('get')
+            ->with('messenger.transport.test')
+            ->willReturn($transport);
+
+        $this->normalizer
+            ->method('normalize')
+            ->with($message)
+            ->willReturn(['key' => 'value']);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('The expected transport messages doesn\'t match actual');
+        $expectedJson = new PyStringNode(['[{"key1": "value"}]'], 1);
+
+        $this->messengerContext->allTransportMessagesShouldBeJson('test', $expectedJson);
+    }
+
+    public function testAllTransportMessagesShouldBeJsonWithVariableFields(): void
+    {
+        // Create mock messages
+        $message1 = new \stdClass();
+        $message1->id = 1;
+        $message1->name = 'Test';
+
+        $message2 = new \stdClass();
+        $message2->id = 2;
+        $message2->name = 'Test';
+
+        // Wrap messages in Envelopes
+        $envelope1 = new Envelope($message1);
+        $envelope2 = new Envelope($message2);
+
+        // Mock the InMemoryTransport and its `get()` method
+        $transport = $this->createMock(InMemoryTransport::class);
+        $transport->method('get')->willReturn([$envelope1, $envelope2]);
+
+        // Configure the container to return the mocked transport
+        $this->container
+            ->expects(self::once())
+            ->method('has')
+            ->with('messenger.transport.test')
+            ->willReturn(true);
+        $this->container
+            ->expects(self::once())
+            ->method('get')
+            ->with('messenger.transport.test')
+            ->willReturn($transport);
+
+        // Configure the normalizer to convert messages to arrays
+        $this->normalizer
+            ->expects($this->exactly(2))
+            ->method('normalize')
+            ->willReturnOnConsecutiveCalls(
+                ['id' => 1, 'name' => 'Test'],
+                ['id' => 2, 'name' => 'Test']
+            );
+
+        $expectedJson = new PyStringNode([
+            '[{"id": "~\\d+", "name": "Test"}]'
+        ], 1);
+
+        // Call the method with variable field "id"
+        $this->messengerContext->allTransportMessagesShouldBeJsonWithVariableFields(
+            'test',
+            'id',
+            $expectedJson
         );
     }
 }
