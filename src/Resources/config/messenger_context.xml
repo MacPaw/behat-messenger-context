@@ -7,5 +7,8 @@
         <service public="true" autowire="true" id="BehatMessengerContext\Context\MessengerContext" class="BehatMessengerContext\Context\MessengerContext">
             <argument key="$container" type="service" id="test.service_container"/>
         </service>
+        <service public="true" autowire="true" id="BehatMessengerContext\Context\TransportRetriever" class="BehatMessengerContext\Context\TransportRetriever">
+            <argument key="$container" type="service" id="test.service_container"/>
+        </service>
     </services>
 </container>

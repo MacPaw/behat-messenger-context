@@ -6,6 +6,7 @@ namespace BehatMessengerContext\Context;
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
+use Behat\Hook\BeforeScenario;
 use Exception;
 use SimilarArrays\SimilarArray;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -16,13 +17,28 @@ class MessengerContext extends SimilarArray implements Context
 {
     private ContainerInterface $container;
     private NormalizerInterface $normalizer;
+    private TransportRetriever $transportRetriever;
 
     public function __construct(
         ContainerInterface $container,
-        NormalizerInterface $normalizer
+        NormalizerInterface $normalizer,
+        TransportRetriever $transportRetriever,
     ) {
         $this->container = $container;
         $this->normalizer = $normalizer;
+        $this->transportRetriever = $transportRetriever;
+    }
+
+    #[BeforeScenario]
+    public function clearMessenger(): void
+    {
+        $transports = $this->transportRetriever->getAllTransports();
+
+        foreach ($transports as $transport) {
+            if ($transport instanceof InMemoryTransport) {
+                $transport->reset();
+            }
+        }
     }
 
     /**
