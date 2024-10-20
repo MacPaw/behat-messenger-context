@@ -6,12 +6,18 @@ namespace BehatMessengerContext\Context;
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
+use Behat\Hook\AfterFeature;
+use Behat\Hook\AfterScenario;
+use Behat\Hook\BeforeFeature;
 use Behat\Hook\BeforeScenario;
 use Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Messenger\Transport\Sync\SyncTransport;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Zenstruck\Messenger\Test\Bus\TestBus;
+use Zenstruck\Messenger\Test\InteractsWithMessenger;
+use Zenstruck\Messenger\Test\Transport\TestTransport;
 
 class MessengerContext implements Context
 {
@@ -29,14 +35,37 @@ class MessengerContext implements Context
         $this->transportRetriever = $transportRetriever;
     }
 
+    #[BeforeFeature]
+    public static function startTrackMessages(): void
+    {
+        if (class_exists(TestTransport::class)) {
+            TestTransport::resetAll();
+            TestTransport::enableMessagesCollection();
+            TestTransport::disableResetOnKernelShutdown();
+            TestBus::enableMessagesCollection();
+        }
+    }
+
+    #[AfterFeature]
+    public static function stopTrackMessages(): void
+    {
+        if (class_exists(TestTransport::class)) {
+            TestTransport::resetAll();
+        }
+    }
+
     #[BeforeScenario]
     public function clearMessenger(): void
     {
-        $transports = $this->transportRetriever->getAllTransports();
+        if (class_exists(TestTransport::class)) {
+            TestTransport::resetAll();
+        } else {
+            $transports = $this->transportRetriever->getAllTransports();
 
-        foreach ($transports as $transport) {
-            if ($transport instanceof InMemoryTransport) {
-                $transport->reset();
+            foreach ($transports as $transport) {
+                if ($transport instanceof InMemoryTransport) {
+                    $transport->reset();
+                }
             }
         }
     }

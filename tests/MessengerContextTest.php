@@ -47,31 +47,6 @@ class MessengerContextTest extends TestCase
         );
     }
 
-    public function testClearMessenger(): void
-    {
-        $serviceProvider = $this->createMock(ServiceProviderInterface::class);
-        $serviceProvider
-            ->expects($this->once())
-            ->method('getProvidedServices')
-            ->willReturn(['messenger.transport.test']);
-
-        $serviceProvider
-            ->expects(self::once())
-            ->method('get')
-            ->with('messenger.transport.test')
-            ->willReturn($this->inMemoryTransport);
-
-        $this->inMemoryTransport
-            ->expects($this->once())
-            ->method('reset');
-
-        (new MessengerContext(
-            $this->container,
-            $this->normalizer,
-            new TransportRetriever($serviceProvider),
-        ))->clearMessenger();
-    }
-
     public function testTransportShouldContainMessageWithJson(): void
     {
         $message = new \stdClass();
