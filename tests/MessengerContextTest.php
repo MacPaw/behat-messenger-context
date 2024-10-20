@@ -58,6 +58,7 @@ class MessengerContextTest extends TestCase
         $serviceProvider
             ->expects(self::once())
             ->method('get')
+            ->with('messenger.transport.test')
             ->willReturn($this->inMemoryTransport);
 
         $this->inMemoryTransport

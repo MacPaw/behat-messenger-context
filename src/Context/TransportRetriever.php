@@ -26,7 +26,7 @@ class TransportRetriever
     {
         $transports = [];
 
-        foreach ($this->receiverLocator->getProvidedServices() as $name => $service) {
+        foreach ($this->receiverLocator->getProvidedServices() as $name) {
             $transports[$name] = $this->receiverLocator->get($name);
         }
 
