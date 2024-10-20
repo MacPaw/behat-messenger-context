@@ -1,4 +1,27 @@
+# Clean with in-memory transport
+Switch all your queue to in-memory transport
+
+example:
+
+```yaml
+    # config/packages/messenger.yaml
+
+    # ...
+
+    when@test:
+        framework:
+            messenger:
+                transports:
+                    async: in-memory://
+                    some-another: in-memory://
+                    # ...
+```
+
+All this transport will be cleared automatically before start every scenario.
+
 # Clear queues messages before scenario with zentruck
+
+We also support auto clear message queue with [zenstruck/messenger-test](https://github.com/zenstruck/messenger-test)
 
 ## Installation
 
