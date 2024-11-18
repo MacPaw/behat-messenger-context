@@ -449,6 +449,111 @@ class MessengerContextTest extends TestCase
         );
     }
 
+    public function testAllTransportMessagesHaveJsonByFieldsWithMask(): void
+    {
+        $message1 = new \stdClass();
+        $message1->id = 1;
+        $message1->name = 'Test';
+
+        $message2 = new \stdClass();
+        $message2->id = 2;
+        $message2->name = 'Test';
+
+        $message3 = new \stdClass();
+        $message3->id = 1000;
+        $message3->name = 'Test5';
+
+        $envelope1 = new Envelope($message1);
+        $envelope2 = new Envelope($message2);
+        $envelope3 = new Envelope($message3);
+
+        $transport = $this->createMock(InMemoryTransport::class);
+        $transport->method('get')->willReturn([$envelope1, $envelope2, $envelope3]);
+
+        $this->container
+            ->expects(self::once())
+            ->method('has')
+            ->with('messenger.transport.test')
+            ->willReturn(true);
+        $this->container
+            ->expects(self::once())
+            ->method('get')
+            ->with('messenger.transport.test')
+            ->willReturn($transport);
+
+        $this->normalizer
+            ->expects($this->exactly(3))
+            ->method('normalize')
+            ->willReturnOnConsecutiveCalls(
+                ['id' => 1, 'name' => 'Test'],
+                ['id' => 2, 'name' => 'Test'],
+                ['id' => 1000, 'name' => 'Test5'],
+            );
+
+        $expectedJson = new PyStringNode([
+            '{"id": "~[0-9]+", "name": "~[a-zA-Z]+"}'
+        ], 1);
+
+        $this->messengerContext->allTransportMessagesHaveJsonByFieldsWithMask(
+            'test',
+            'id, name',
+            $expectedJson
+        );
+    }
+
+    public function testFailAllTransportMessagesHaveJsonByFieldsWithMask(): void
+    {
+        $message1 = new \stdClass();
+        $message1->id = 1;
+        $message1->name = 'Test';
+
+        $message2 = new \stdClass();
+        $message2->id = 2;
+        $message2->name = 'Test';
+
+        $message3 = new \stdClass();
+        $message3->id = 1000;
+        $message3->name = 'Test5';
+
+        $envelope1 = new Envelope($message1);
+        $envelope2 = new Envelope($message2);
+        $envelope3 = new Envelope($message3);
+
+        $transport = $this->createMock(InMemoryTransport::class);
+        $transport->method('get')->willReturn([$envelope1, $envelope2, $envelope3]);
+
+        $this->container
+            ->expects(self::once())
+            ->method('has')
+            ->with('messenger.transport.test')
+            ->willReturn(true);
+        $this->container
+            ->expects(self::once())
+            ->method('get')
+            ->with('messenger.transport.test')
+            ->willReturn($transport);
+
+        $this->normalizer
+            ->expects($this->exactly(3))
+            ->method('normalize')
+            ->willReturnOnConsecutiveCalls(
+                ['id' => 1, 'name' => 'Test'],
+                ['id' => 2, 'name' => 'Test'],
+                ['id' => 1000, 'name' => 'Test5'],
+            );
+
+        $expectedJson = new PyStringNode([
+            '{"id": "~[a-zA-Z]+", "name": "~[a-zA-Z]+"}'
+        ], 1);
+
+        $this->expectException(Exception::class);
+        $this->messengerContext->allTransportMessagesHaveJsonByFieldsWithMask(
+            'test',
+            'id, name',
+            $expectedJson
+        );
+    }
+
     public function testTransportWasReset(): void
     {
         $serviceProvider = $this->createMock(ServiceProviderInterface::class);

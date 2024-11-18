@@ -136,6 +136,37 @@ class MessengerContext extends SimilarArray implements Context
     }
 
     /**
+     * // phpcs:disable
+     * @And all transport :transportName messages should contain message with JSON and variable fields :fields by mask :mask:
+     * // phpcs:enable
+     */
+    public function allTransportMessagesHaveJsonByFieldsWithMask(
+        string $transportName,
+        string $variableFields,
+        PyStringNode $expectedMessageList,
+    ): void {
+        $expectedMessageList = $this->decodeExpectedJson($expectedMessageList);
+        $variableFields = explode(', ', $variableFields);
+
+        $transport = $this->getMessengerTransportByName($transportName);
+        $actualMessageList = [];
+        $expectedMessages = [];
+        foreach ($transport->get() as $envelope) {
+            $actualMessageList[] = $this->convertToArray($envelope->getMessage());
+            $expectedMessages[] = $expectedMessageList;
+        }
+
+        if (!$this->isArraysSimilar($expectedMessages, $actualMessageList, $variableFields)) {
+            throw new Exception(
+                sprintf(
+                    'The expected transport messages doesn\'t match actual: %s',
+                    $this->getPrettyJson($actualMessageList),
+                ),
+            );
+        }
+    }
+
+    /**
      * @Then all transport :transportName messages should be JSON with variable fields :variableFields:
      */
     public function allTransportMessagesShouldBeJsonWithVariableFields(
