@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BehatMessengerContext\Tests\DependencyInjection;
+namespace BehatMessengerContext\Tests\Unit\DependencyInjection;
 
 use BehatMessengerContext\Context\MessengerContext;
 use BehatMessengerContext\DependencyInjection\BehatMessengerContextExtension;

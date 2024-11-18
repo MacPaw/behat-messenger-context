@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BehatMessengerContext\Tests;
+namespace BehatMessengerContext\Tests\Unit;
 
 use Behat\Gherkin\Node\PyStringNode;
 use BehatMessengerContext\Context\MessengerContext;
@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Contracts\Service\ServiceProviderInterface;
 
 class MessengerContextTest extends TestCase
 {
@@ -445,6 +446,90 @@ class MessengerContextTest extends TestCase
             'test',
             'id',
             $expectedJson
+        );
+    }
+
+    public function testTransportWasReset(): void
+    {
+        $serviceProvider = $this->createMock(ServiceProviderInterface::class);
+        $serviceProvider
+            ->expects($this->once())
+            ->method('getProvidedServices')
+            ->willReturn(['messenger.transport.test']);
+
+        $serviceProvider
+            ->expects(self::once())
+            ->method('get')
+            ->with('messenger.transport.test')
+            ->willReturn($this->inMemoryTransport);
+
+        $this->inMemoryTransport
+            ->expects($this->once())
+            ->method('reset');
+
+        (new MessengerContext(
+            $this->container,
+            $this->normalizer,
+            new TransportRetriever($serviceProvider)
+        ))->clearMessengerBeforeScenario();
+    }
+
+    public function testTransportWasResetWithZentruck(): void
+    {
+        require_once __DIR__ . '/../Stub/Zentruck/TestBus.php';
+        require_once __DIR__ . '/../Stub/Zentruck/TestTransport.php';
+
+        $transportClass = 'Zenstruck\Messenger\Test\Transport\TestTransport';
+
+        $transportClass::reset();
+        $this->messengerContext::stopTrackMessages();
+
+        $this->assertEquals(
+            $transportClass::RESET_ALL,
+            $transportClass::getResult() & $transportClass::RESET_ALL
+        );
+
+        $this->assertNotEquals(
+            $transportClass::DISABLE_RESET_ON_KERNEL_SHUTDOWN,
+            $transportClass::getResult() & $transportClass::DISABLE_RESET_ON_KERNEL_SHUTDOWN
+        );
+
+        $this->assertNotEquals(
+            $transportClass::ENABLE_MESSAGES_COLLECTION,
+            $transportClass::getResult() & $transportClass::ENABLE_MESSAGES_COLLECTION
+        );
+    }
+
+    public function testClearWithZentruck(): void
+    {
+        require_once __DIR__ . '/../Stub/Zentruck/TestBus.php';
+        require_once __DIR__ . '/../Stub/Zentruck/TestTransport.php';
+
+        $transportClass = 'Zenstruck\Messenger\Test\Transport\TestTransport';
+        $busClass = 'Zenstruck\Messenger\Test\Bus\TestBus';
+
+        $transportClass::reset();
+        $busClass::reset();
+        $this->messengerContext::startTrackMessages();
+
+        $this->assertEquals(
+            $transportClass::RESET_ALL,
+            $transportClass::getResult() & $transportClass::RESET_ALL
+        );
+
+        $this->assertEquals(
+            $transportClass::DISABLE_RESET_ON_KERNEL_SHUTDOWN,
+            $transportClass::getResult() & $transportClass::DISABLE_RESET_ON_KERNEL_SHUTDOWN
+        );
+
+        $this->assertEquals(
+            $transportClass::ENABLE_MESSAGES_COLLECTION,
+            $transportClass::getResult() & $transportClass::ENABLE_MESSAGES_COLLECTION
+        );
+
+        $this->assertEquals(
+            $busClass::ENABLE_MESSAGES_COLLECTION,
+            $busClass::getResult() & $busClass::ENABLE_MESSAGES_COLLECTION
         );
     }
 }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace BehatMessengerContext\Tests;
+namespace BehatMessengerContext\Tests\Unit;
 
 use BehatMessengerContext\Context\TransportRetriever;
 use PHPUnit\Framework\TestCase;

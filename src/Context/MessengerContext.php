@@ -21,7 +21,7 @@ class MessengerContext extends SimilarArray implements Context
 {
     private ContainerInterface $container;
     private NormalizerInterface $normalizer;
-    private TransportRetriever $transportRetriever;
+    protected static TransportRetriever $transportRetriever;
 
     public function __construct(
         ContainerInterface $container,
@@ -30,13 +30,13 @@ class MessengerContext extends SimilarArray implements Context
     ) {
         $this->container = $container;
         $this->normalizer = $normalizer;
-        $this->transportRetriever = $transportRetriever;
+        static::$transportRetriever = $transportRetriever;
     }
 
     #[BeforeFeature]
     public static function startTrackMessages(): void
     {
-        if (class_exists(TestTransport::class)) {
+        if (class_exists(TestTransport::class) && class_exists(TestBus::class)) {
             TestTransport::resetAll();
             TestTransport::enableMessagesCollection();
             TestTransport::disableResetOnKernelShutdown();
@@ -47,25 +47,13 @@ class MessengerContext extends SimilarArray implements Context
     #[AfterFeature]
     public static function stopTrackMessages(): void
     {
-        if (class_exists(TestTransport::class)) {
-            TestTransport::resetAll();
-        }
+        self::clearMessenger();
     }
 
     #[BeforeScenario]
-    public function clearMessenger(): void
+    public function clearMessengerBeforeScenario(): void
     {
-        if (class_exists(TestTransport::class)) {
-            TestTransport::resetAll();
-        } else {
-            $transports = $this->transportRetriever->getAllTransports();
-
-            foreach ($transports as $transport) {
-                if ($transport instanceof InMemoryTransport) {
-                    $transport->reset();
-                }
-            }
-        }
+        self::clearMessenger();
     }
 
     /**
@@ -244,5 +232,20 @@ class MessengerContext extends SimilarArray implements Context
         throw new Exception(
             'In memory transport ' . $fullName . ' not found',
         );
+    }
+
+    private static function clearMessenger(): void
+    {
+        if (class_exists(TestTransport::class)) {
+            TestTransport::resetAll();
+        } else {
+            $transports = static::$transportRetriever->getAllTransports();
+
+            foreach ($transports as $transport) {
+                if ($transport instanceof InMemoryTransport) {
+                    $transport->reset();
+                }
+            }
+        }
     }
 }

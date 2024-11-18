@@ -18,10 +18,11 @@ jobs:
                     - '6.3.*'
                     - '6.4.*'
                     - '7.0.*'
+                    - '7.1.*'
                 include:
                     - php: '8.2'
                       coverage: 'xdebug'
-                      symfony-versions: '7.0.*'
+                      symfony-versions: '7.1.*'
 
 
         name: PHP ${{ matrix.php }} Symfony ${{ matrix.symfony-versions }} ${{ matrix.description }}
