@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace BehatMessengerContext\Context;
 
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\TransportInterface;
 use Symfony\Contracts\Service\ServiceProviderInterface;
 

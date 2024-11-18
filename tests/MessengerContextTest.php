@@ -6,6 +6,8 @@ namespace BehatMessengerContext\Tests;
 
 use Behat\Gherkin\Node\PyStringNode;
 use BehatMessengerContext\Context\MessengerContext;
+use BehatMessengerContext\Context\TransportRetriever;
+use Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\Container;
@@ -13,9 +15,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Envelope;
 use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
-use BehatMessengerContext\Context\TransportRetriever;
-use Exception;
-use Symfony\Contracts\Service\ServiceProviderInterface;
 
 class MessengerContextTest extends TestCase
 {
@@ -277,7 +276,10 @@ class MessengerContextTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Transport messenger.transport.invalid not found');
 
-        $this->messengerContext->transportShouldContainMessageWithJson('invalid', new PyStringNode([json_encode([])], 1));
+        $this->messengerContext->transportShouldContainMessageWithJson(
+            'invalid',
+            new PyStringNode([json_encode([])], 1),
+        );
     }
 
     public function testAllTransportMessagesShouldBeJson(): void
