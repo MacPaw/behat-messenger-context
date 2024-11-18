@@ -2,6 +2,7 @@
 # Behat Custom Step: Transport JSON Message Assertion with Regexp Fields
 
 This documentation outlines the purpose and usage of the custom Behat step definition for verifying if a Symfony Messenger transport contains a message with a specific JSON structure, using regular expressions to handle dynamic fields.
+
 ## Purpose
 
 This function is designed to check if a given transport (such as an asynchronous queue) contains a message that matches a particular JSON structure, while allowing certain fields to be validated using regular expressions. It is particularly useful when testing messages with dynamic data, such as timestamps, unique identifiers, or payloads, where the exact value cannot be guaranteed.

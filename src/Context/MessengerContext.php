@@ -7,19 +7,17 @@ namespace BehatMessengerContext\Context;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Hook\AfterFeature;
-use Behat\Hook\AfterScenario;
 use Behat\Hook\BeforeFeature;
 use Behat\Hook\BeforeScenario;
 use Exception;
+use SimilarArrays\SimilarArray;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
-use Symfony\Component\Messenger\Transport\Sync\SyncTransport;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Zenstruck\Messenger\Test\Bus\TestBus;
-use Zenstruck\Messenger\Test\InteractsWithMessenger;
 use Zenstruck\Messenger\Test\Transport\TestTransport;
 
-class MessengerContext implements Context
+class MessengerContext extends SimilarArray implements Context
 {
     private ContainerInterface $container;
     private NormalizerInterface $normalizer;
@@ -81,7 +79,7 @@ class MessengerContext implements Context
         $actualMessageList = [];
         foreach ($transport->get() as $envelope) {
             $actualMessage = $this->convertToArray($envelope->getMessage());
-            if ($this->isMessagesAreSimilar($expectedMessage, $actualMessage)) {
+            if ($this->isArraysSimilar($expectedMessage, $actualMessage)) {
                 return;
             }
 
@@ -111,7 +109,7 @@ class MessengerContext implements Context
         $actualMessageList = [];
         foreach ($transport->get() as $envelope) {
             $actualMessage = $this->convertToArray($envelope->getMessage());
-            if ($this->isMessagesAreSimilar($expectedMessage, $actualMessage, $variableFields)) {
+            if ($this->isArraysSimilar($expectedMessage, $actualMessage, $variableFields)) {
                 return;
             }
 
@@ -139,11 +137,7 @@ class MessengerContext implements Context
             $actualMessageList[] = $this->convertToArray($envelope->getMessage());
         }
 
-        if (!$this->isMessagesAreSimilar(
-            expected: $expectedMessageList,
-            actual: $actualMessageList,
-            multipleActual: true,
-        )) {
+        if (!$this->isArraysSimilar($expectedMessageList, $actualMessageList)) {
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',
@@ -170,12 +164,7 @@ class MessengerContext implements Context
             $actualMessageList[] = $this->convertToArray($envelope->getMessage());
         }
 
-        if (!$this->isMessagesAreSimilar(
-            expected: $expectedMessageList,
-            actual: $actualMessageList,
-            requiredFields: $variableFields,
-            multipleActual: true,
-        )) {
+        if (!$this->isArraysSimilar($expectedMessageList, $actualMessageList, $variableFields)) {
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',
@@ -255,54 +244,5 @@ class MessengerContext implements Context
         throw new Exception(
             'In memory transport ' . $fullName . ' not found',
         );
-    }
-
-    /**
-     * @param array $actual <mixed>
-     * @param array $expected <mixed>
-     * @param string[]|null $requiredFields
-     *
-     * @return bool
-     */
-    private function isMessagesAreSimilar(
-        array $expected,
-        array $actual,
-        ?array $requiredFields = null,
-        bool $multipleActual = false,
-    ): bool {
-        if ($multipleActual) {
-            foreach ($actual as $nextActualItem) {
-                if (!$this->isMessagesAreSimilar($expected, $nextActualItem, $requiredFields)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        $requiredFields = $requiredFields ?? array_keys($expected);
-
-        foreach ($requiredFields as $requiredField) {
-            if (!isset($actual[$requiredField])) {
-                return false;
-            }
-
-            if (!isset($expected[$requiredField])) {
-                return false;
-            }
-
-            if (is_string($expected[$requiredField]) && str_starts_with($expected[$requiredField], '~')) {
-                $pregMatchValue = preg_match(
-                    sprintf('|%s|', substr($expected[$requiredField], 1)),
-                    sprintf('%s', $actual[$requiredField]),
-                );
-
-                return !($pregMatchValue === 0 || $pregMatchValue === false);
-            }
-
-            return $actual[$requiredField] === $expected[$requiredField];
-        }
-
-        return false;
     }
 }

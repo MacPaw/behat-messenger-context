@@ -265,7 +265,7 @@ class MessengerContextTest extends TestCase
 
         $this->messengerContext->transportShouldContainMessageWithJsonAndVariableFields(
             'test',
-            'id,name,timestamp',
+            '',
             new PyStringNode([json_encode($expectedMessage)], 1)
         );
     }
@@ -307,7 +307,7 @@ class MessengerContextTest extends TestCase
             ->with($message)
             ->willReturn(['key' => 'value']);
 
-        $expectedJson = new PyStringNode(['{"key": "value"}'], 1);
+        $expectedJson = new PyStringNode(['[{"key": "value"}]'], 1);
 
         $this->messengerContext->allTransportMessagesShouldBeJson('test', $expectedJson);
     }
@@ -356,11 +356,16 @@ class MessengerContextTest extends TestCase
         $message2->id = 2;
         $message2->name = 'Test';
 
+        $message3 = new \stdClass();
+        $message3->id = 1000;
+        $message3->name = 'Test5';
+
         $envelope1 = new Envelope($message1);
         $envelope2 = new Envelope($message2);
+        $envelope3 = new Envelope($message3);
 
         $transport = $this->createMock(InMemoryTransport::class);
-        $transport->method('get')->willReturn([$envelope1, $envelope2]);
+        $transport->method('get')->willReturn([$envelope1, $envelope2, $envelope3]);
 
         $this->container
             ->expects(self::once())
@@ -374,15 +379,16 @@ class MessengerContextTest extends TestCase
             ->willReturn($transport);
 
         $this->normalizer
-            ->expects($this->exactly(2))
+            ->expects($this->exactly(3))
             ->method('normalize')
             ->willReturnOnConsecutiveCalls(
                 ['id' => 1, 'name' => 'Test'],
-                ['id' => 2, 'name' => 'Test']
+                ['id' => 2, 'name' => 'Test'],
+                ['id' => 1000, 'name' => 'Test5'],
             );
 
         $expectedJson = new PyStringNode([
-            '{"id": "~\\\\d+", "name": "Test"}'
+            '[{"id": "~[0-9]+", "name": "Test"}, {"id": "~[0-9]+", "name": "Test"}, {"id": "~[0-9]+", "name": "Test5"}]'
         ], 1);
 
         $this->messengerContext->allTransportMessagesShouldBeJsonWithVariableFields(
