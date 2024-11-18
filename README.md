@@ -1,10 +1,5 @@
 # Behat Messenger Context Bundle
-[![Latest Stable Version](http://poser.pugx.org/macpaw/behat-messenger-context/v)](https://packagist.org/packages/macpaw/behat-messenger-context)
-[![Total Downloads](http://poser.pugx.org/macpaw/behat-messenger-context/downloads)](https://packagist.org/packages/macpaw/behat-messenger-context)
-[![License](http://poser.pugx.org/macpaw/behat-messenger-context/license)](https://packagist.org/packages/macpaw/behat-messenger-context)
-[![composer.lock](http://poser.pugx.org/macpaw/behat-messenger-context/composerlock)](https://packagist.org/packages/macpaw/behat-messenger-context)
-[![Dependents](http://poser.pugx.org/macpaw/behat-messenger-context/dependents)](https://packagist.org/packages/macpaw/behat-messenger-context)
-[![Suggesters](http://poser.pugx.org/macpaw/behat-messenger-context/suggesters)](https://packagist.org/packages/macpaw/behat-messenger-context)
+[![Latest Stable Version](http://poser.pugx.org/macpaw/behat-messenger-context/v)](https://packagist.org/packages/macpaw/behat-messenger-context) [![Total Downloads](http://poser.pugx.org/macpaw/behat-messenger-context/downloads)](https://packagist.org/packages/macpaw/behat-messenger-context) [![Latest Unstable Version](http://poser.pugx.org/macpaw/behat-messenger-context/v/unstable)](https://packagist.org/packages/macpaw/behat-messenger-context) [![License](http://poser.pugx.org/macpaw/behat-messenger-context/license)](https://packagist.org/packages/macpaw/behat-messenger-context) [![PHP Version Require](http://poser.pugx.org/macpaw/behat-messenger-context/require/php)](https://packagist.org/packages/macpaw/behat-messenger-context)
 
 | Version    | Build Status                                               | Coverage                                                                 |
 |------------|------------------------------------------------------------|--------------------------------------------------------------------------|
