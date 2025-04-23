@@ -10,6 +10,7 @@ use BehatMessengerContext\Context\TransportRetriever;
 use Exception;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Envelope;
@@ -49,13 +50,13 @@ class MessengerContextTest extends TestCase
 
     public function testTransportShouldContainMessageWithJson(): void
     {
-        $message = new \stdClass();
+        $message = new stdClass();
         $expectedMessage = ['key' => 'value'];
 
         $this->inMemoryTransport
             ->expects($this->once())
             ->method('get')
-            ->willReturn([new \Symfony\Component\Messenger\Envelope($message)]);
+            ->willReturn([new Envelope($message)]);
 
         $this->container
             ->expects($this->once())
@@ -83,13 +84,13 @@ class MessengerContextTest extends TestCase
 
     public function testFailTransportShouldContainMessageWithJson(): void
     {
-        $message = new \stdClass();
+        $message = new stdClass();
         $expectedMessage = ['key' => 'value'];
 
         $this->inMemoryTransport
             ->expects($this->once())
             ->method('get')
-            ->willReturn([new \Symfony\Component\Messenger\Envelope($message)]);
+            ->willReturn([new Envelope($message)]);
 
         $this->container
             ->expects($this->once())
@@ -193,7 +194,7 @@ class MessengerContextTest extends TestCase
 
     public function testFailTransportShouldContainMessageWithJsonAndVariableFields(): void
     {
-        $message = new \stdClass();
+        $message = new stdClass();
         $message->id = '123';
         $message->name = 'TestMessage';
         $message->timestamp = '2024-10-17T12:00:00Z'; // Example variable field
@@ -203,7 +204,7 @@ class MessengerContextTest extends TestCase
         $this->inMemoryTransport
             ->expects($this->once())
             ->method('get')
-            ->willReturn([new \Symfony\Component\Messenger\Envelope($message)]);
+            ->willReturn([new Envelope($message)]);
 
         $this->container
             ->expects($this->once())
@@ -233,7 +234,7 @@ class MessengerContextTest extends TestCase
 
     public function testTransportShouldContainMessageWithJsonAndVariableFields(): void
     {
-        $message = new \stdClass();
+        $message = new stdClass();
         $message->id = 'unique';
         $message->name = 'TestMessage';
         $message->timestamp = '2024-10-17T12:00:00Z'; // Example variable field
@@ -285,7 +286,7 @@ class MessengerContextTest extends TestCase
 
     public function testAllTransportMessagesShouldBeJson(): void
     {
-        $message = new \stdClass();
+        $message = new stdClass();
         $message->key = 'value';
 
         $envelope = new Envelope($message);
@@ -317,7 +318,7 @@ class MessengerContextTest extends TestCase
 
     public function testFailAllTransportMessagesShouldBeJson(): void
     {
-        $message = new \stdClass();
+        $message = new stdClass();
         $message->key = 'value';
 
         $envelope = new Envelope($message);
@@ -351,15 +352,15 @@ class MessengerContextTest extends TestCase
 
     public function testAllTransportMessagesShouldBeJsonWithVariableFields(): void
     {
-        $message1 = new \stdClass();
+        $message1 = new stdClass();
         $message1->id = 1;
         $message1->name = 'Test';
 
-        $message2 = new \stdClass();
+        $message2 = new stdClass();
         $message2->id = 2;
         $message2->name = 'Test';
 
-        $message3 = new \stdClass();
+        $message3 = new stdClass();
         $message3->id = 1000;
         $message3->name = 'Test5';
 
@@ -403,11 +404,11 @@ class MessengerContextTest extends TestCase
 
     public function testFailAllTransportMessagesShouldBeJsonWithVariableFields(): void
     {
-        $message1 = new \stdClass();
+        $message1 = new stdClass();
         $message1->id = 1;
         $message1->name = 'Test';
 
-        $message2 = new \stdClass();
+        $message2 = new stdClass();
         $message2->id = 2;
         $message2->name = 'Test';
 
@@ -451,15 +452,15 @@ class MessengerContextTest extends TestCase
 
     public function testAllTransportMessagesHaveJsonByFieldsWithMask(): void
     {
-        $message1 = new \stdClass();
+        $message1 = new stdClass();
         $message1->id = 1;
         $message1->name = 'Test';
 
-        $message2 = new \stdClass();
+        $message2 = new stdClass();
         $message2->id = 2;
         $message2->name = 'Test';
 
-        $message3 = new \stdClass();
+        $message3 = new stdClass();
         $message3->id = 1000;
         $message3->name = 'Test5';
 
@@ -503,15 +504,15 @@ class MessengerContextTest extends TestCase
 
     public function testFailAllTransportMessagesHaveJsonByFieldsWithMask(): void
     {
-        $message1 = new \stdClass();
+        $message1 = new stdClass();
         $message1->id = 1;
         $message1->name = 'Test';
 
-        $message2 = new \stdClass();
+        $message2 = new stdClass();
         $message2->id = 2;
         $message2->name = 'Test';
 
-        $message3 = new \stdClass();
+        $message3 = new stdClass();
         $message3->id = 1000;
         $message3->name = 'Test5';
 
