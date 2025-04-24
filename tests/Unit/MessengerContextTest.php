@@ -561,7 +561,7 @@ class MessengerContextTest extends TestCase
         $serviceProvider
             ->expects($this->once())
             ->method('getProvidedServices')
-            ->willReturn(['messenger.transport.test']);
+            ->willReturn(['messenger.transport.test' => '?']);
 
         $serviceProvider
             ->expects(self::once())
