@@ -1,87 +1,48 @@
-Behat Messenger Context Bundle
-=================================
+# Behat Messenger Context Bundle
+[![Latest Stable Version](http://poser.pugx.org/macpaw/behat-messenger-context/v)](https://packagist.org/packages/macpaw/behat-messenger-context) 
+[![Total Downloads](http://poser.pugx.org/macpaw/behat-messenger-context/downloads)](https://packagist.org/packages/macpaw/behat-messenger-context)
+[![Latest Unstable Version](http://poser.pugx.org/macpaw/behat-messenger-context/v/unstable)](https://packagist.org/packages/macpaw/behat-messenger-context)
+[![License](http://poser.pugx.org/macpaw/behat-messenger-context/license)](https://packagist.org/packages/macpaw/behat-messenger-context)
+[![PHP Version Require](http://poser.pugx.org/macpaw/behat-messenger-context/require/php)](https://packagist.org/packages/macpaw/behat-messenger-context)
 
-| Version | Build Status | Code Coverage |
-|:---------:|:-------------:|:-----:|
-| `master`| [![CI][master Build Status Image]][master Build Status] | [![Coverage Status][master Code Coverage Image]][master Code Coverage] |
-| `develop`| [![CI][develop Build Status Image]][develop Build Status] | [![Coverage Status][develop Code Coverage Image]][develop Code Coverage] |
-
-Installation
-============
-
-Step 1: Download the Bundle
-----------------------------------
-Open a command console, enter your project directory and execute:
-
-###  Applications that use Symfony Flex [in progress](https://github.com/MacPaw/BehatRedisContext/issues/2)
-
-```console
-$ composer require --dev macpaw/behat-messenger-context
-```
-
-### Applications that don't use Symfony Flex
-
-Open a command console, enter your project directory and execute the
-following command to download the latest stable version of this bundle:
-
-```console
-$ composer require --dev macpaw/behat-messenger-context
-```
-
-This command requires you to have Composer installed globally, as explained
-in the [installation chapter](https://getcomposer.org/doc/00-intro.md)
-of the Composer documentation.
+| Version    | Build Status                                               | Coverage                                                                 |
+|------------|------------------------------------------------------------|--------------------------------------------------------------------------|
+| `master`   | [![CI][master Build Status Image]][master Build Status]    | [![Coverage Status][master Code Coverage Image]][master Code Coverage]   |
+| `develop`  | [![CI][develop Build Status Image]][develop Build Status]  | [![Coverage Status][develop Code Coverage Image]][develop Code Coverage] |
 
 
-Then, enable the bundle by adding it to the list of registered bundles
-in the `app/AppKernel.php` file of your project:
+This repository provides custom Behat step definitions for working with Symfony Messenger transports. It includes functionality for checking messages in transports, validating them against expected JSON structures, and working with variable fields.
 
-```php
-<?php
-// app/AppKernel.php
+## Installation
 
-// ...
-class AppKernel extends Kernel
-{
-    public function registerBundles()
-    {
-        $bundles = array(
-            // ...
-            BehatMessengerContext\BehatMessengerContextBundle::class => ['test' => true],
-        );
+To install the MessengerContext and integrate it with your Behat setup, follow the instructions provided in the [Installation Guide](docs/install.md).
 
-        // ...
-    }
+## Available Features
 
-    // ...
-}
-```
+### Check a Specific Message in a Transport
+You can verify if a specific message exists in a given transport.
+* Documentation: [Check Transport Message](docs/MessengerContext/check_transport_message.md)
 
-Step 2: Configure Messenger
-=============
-Copying `config/packages/dev/messenger.yaml` and pasting that into `config/packages/test/`. This gives us messenger configuration that will only be used in the test environment. Uncomment the code, and replace sync with in-memory. Do that for both of the transports.
+### Check All Messages in a Transport
+Verify if all messages in a given transport match the expected JSON structure.
+* Documentation: [Check All Transport Messages](docs/MessengerContext/check_all_transport_message.md)
 
-```yaml
-framework:
-    messenger:
-        transports:
-            async: 'in-memory://'
-            async_priority_high: 'in-memory://'
-            ...
-...
-```
+### Check Messages with Regular Expressions
+You can use regular expressions to validate messages that contain dynamic or variable data.
+* Documentation for specific message: [Check Transport Message with Regexp](docs/MessengerContext/check_transport_message_regexp.md)
+* Documentation for all messages: [Check All Transport Messages with Regexp](docs/MessengerContext/check_all_transport_message_regexp.md)
 
+### Check Every Messages with Mask Regular Expressions
+You can use regular expression to validate all messages messages that contain dynamic or variable data.
+* Documentation for all specific message: [Check Transport Messages with Regexp](docs/MessengerContext/check_transport_messages_regexp_mask.md)
 
-Step 3: Configure Behat
-=============
-Go to `behat.yml`
+### Verify Message Count in a Transport
+Ensure that a specific number of messages exist in a given transport.
 
-```yaml
-...
-  contexts:
-    - BehatMessengerContext\Context\MessengerContext
-...
-```
+### Auto clean queue messages before scenario
+Check details in [documentation](docs/MessengerContext/clear_transport_with_zentruck.md)
+
+* Documentation: [Count Messages in Transport](docs/MessengerContext/count_message_transport.md)
 
 [master Build Status]: https://github.com/macpaw/behat-messenger-context/actions?query=workflow%3ACI+branch%3Amaster
 [master Build Status Image]: https://github.com/macpaw/behat-messenger-context/workflows/CI/badge.svg?branch=master

@@ -6,6 +6,10 @@
     <services>
         <service public="true" autowire="true" id="BehatMessengerContext\Context\MessengerContext" class="BehatMessengerContext\Context\MessengerContext">
             <argument key="$container" type="service" id="test.service_container"/>
+            <argument key="$transportRetriever" type="service" id="BehatMessengerContext\Context\TransportRetriever"/>
+        </service>
+        <service public="true" autowire="true" id="BehatMessengerContext\Context\TransportRetriever" class="BehatMessengerContext\Context\TransportRetriever">
+            <argument key="$receiverLocator" type="service" id="messenger.receiver_locator"/>
         </service>
     </services>
 </container>

@@ -2,5 +2,6 @@ parameters:
     excludes_analyse:
     paths:
         - src
+        - tests/Unit
     level: 5
     treatPhpDocTypesAsCertain: false
