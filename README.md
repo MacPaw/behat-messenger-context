@@ -1,9 +1,15 @@
 # Behat Messenger Context Bundle
+[![Latest Stable Version](http://poser.pugx.org/macpaw/behat-messenger-context/v)](https://packagist.org/packages/macpaw/behat-messenger-context) 
+[![Total Downloads](http://poser.pugx.org/macpaw/behat-messenger-context/downloads)](https://packagist.org/packages/macpaw/behat-messenger-context)
+[![Latest Unstable Version](http://poser.pugx.org/macpaw/behat-messenger-context/v/unstable)](https://packagist.org/packages/macpaw/behat-messenger-context)
+[![License](http://poser.pugx.org/macpaw/behat-messenger-context/license)](https://packagist.org/packages/macpaw/behat-messenger-context)
+[![PHP Version Require](http://poser.pugx.org/macpaw/behat-messenger-context/require/php)](https://packagist.org/packages/macpaw/behat-messenger-context)
 
-| Version | Build Status | Code Coverage |
-|:---------:|:-------------:|:-----:|
-| `master`| [![CI][master Build Status Image]][master Build Status] | [![Coverage Status][master Code Coverage Image]][master Code Coverage] |
-| `develop`| [![CI][develop Build Status Image]][develop Build Status] | [![Coverage Status][develop Code Coverage Image]][develop Code Coverage] |
+| Version    | Build Status                                               | Coverage                                                                 |
+|------------|------------------------------------------------------------|--------------------------------------------------------------------------|
+| `master`   | [![CI][master Build Status Image]][master Build Status]    | [![Coverage Status][master Code Coverage Image]][master Code Coverage]   |
+| `develop`  | [![CI][develop Build Status Image]][develop Build Status]  | [![Coverage Status][develop Code Coverage Image]][develop Code Coverage] |
+
 
 This repository provides custom Behat step definitions for working with Symfony Messenger transports. It includes functionality for checking messages in transports, validating them against expected JSON structures, and working with variable fields.
 
@@ -26,8 +32,15 @@ You can use regular expressions to validate messages that contain dynamic or var
 * Documentation for specific message: [Check Transport Message with Regexp](docs/MessengerContext/check_transport_message_regexp.md)
 * Documentation for all messages: [Check All Transport Messages with Regexp](docs/MessengerContext/check_all_transport_message_regexp.md)
 
+### Check Every Messages with Mask Regular Expressions
+You can use regular expression to validate all messages messages that contain dynamic or variable data.
+* Documentation for all specific message: [Check Transport Messages with Regexp](docs/MessengerContext/check_transport_messages_regexp_mask.md)
+
 ### Verify Message Count in a Transport
 Ensure that a specific number of messages exist in a given transport.
+
+### Auto clean queue messages before scenario
+Check details in [documentation](docs/MessengerContext/clear_transport_with_zentruck.md)
 
 * Documentation: [Count Messages in Transport](docs/MessengerContext/count_message_transport.md)
 

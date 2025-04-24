@@ -18,10 +18,11 @@ jobs:
                     - '6.3.*'
                     - '6.4.*'
                     - '7.0.*'
+                    - '7.1.*'
                 include:
                     - php: '8.2'
                       coverage: 'xdebug'
-                      symfony-versions: '7.0.*'
+                      symfony-versions: '7.1.*'
 
 
         name: PHP ${{ matrix.php }} Symfony ${{ matrix.symfony-versions }} ${{ matrix.description }}
@@ -29,7 +30,7 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v2
 
-            - uses: actions/cache@v2
+            - uses: actions/cache@v4
               with:
                   path: ~/.composer/cache/files
                   key: ${{ matrix.php }}-${{ matrix.symfony-versions }}
@@ -48,7 +49,7 @@ jobs:
               run: echo "::set-output name=dir::$(composer config cache-files-dir)"
 
             - name: Cache composer
-              uses: actions/cache@v2.1.2
+              uses: actions/cache@v4
               with:
                   path: ${{ steps.composer-cache.outputs.dir }}
                   key: ${{ runner.os }}-${{ matrix.php }}-${{ matrix.symfony-versions }}-composer-${{ hashFiles('composer.json') }}

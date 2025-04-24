@@ -6,18 +6,54 @@ namespace BehatMessengerContext\Context;
 
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
+use Behat\Hook\AfterFeature;
+use Behat\Hook\BeforeFeature;
+use Behat\Hook\BeforeScenario;
 use Exception;
 use SimilarArrays\SimilarArray;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Messenger\Transport\InMemory\InMemoryTransport;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Zenstruck\Messenger\Test\Bus\TestBus;
+use Zenstruck\Messenger\Test\Transport\TestTransport;
 
 class MessengerContext extends SimilarArray implements Context
 {
+    private ContainerInterface $container;
+    private NormalizerInterface $normalizer;
+    protected static TransportRetriever $transportRetriever;
+
     public function __construct(
-        private readonly ContainerInterface $container,
-        private readonly NormalizerInterface $normalizer
+        ContainerInterface $container,
+        NormalizerInterface $normalizer,
+        TransportRetriever $transportRetriever,
     ) {
+        $this->container = $container;
+        $this->normalizer = $normalizer;
+        static::$transportRetriever = $transportRetriever;
+    }
+
+    #[BeforeFeature]
+    public static function startTrackMessages(): void
+    {
+        if (class_exists(TestTransport::class) && class_exists(TestBus::class)) {
+            TestTransport::resetAll();
+            TestTransport::enableMessagesCollection();
+            TestTransport::disableResetOnKernelShutdown();
+            TestBus::enableMessagesCollection();
+        }
+    }
+
+    #[AfterFeature]
+    public static function stopTrackMessages(): void
+    {
+        self::clearMessenger();
+    }
+
+    #[BeforeScenario]
+    public function clearMessengerBeforeScenario(): void
+    {
+        self::clearMessenger();
     }
 
     /**
@@ -41,8 +77,8 @@ class MessengerContext extends SimilarArray implements Context
         throw new Exception(
             sprintf(
                 'The transport doesn\'t contain message with such JSON, actual messages: %s',
-                $this->getPrettyJson($actualMessageList)
-            )
+                $this->getPrettyJson($actualMessageList),
+            ),
         );
     }
 
@@ -52,7 +88,7 @@ class MessengerContext extends SimilarArray implements Context
     public function transportShouldContainMessageWithJsonAndVariableFields(
         string $transportName,
         string $variableFields,
-        PyStringNode $expectedMessage
+        PyStringNode $expectedMessage,
     ): void {
         $variableFields = $variableFields ? array_map('trim', explode(',', $variableFields)) : [];
         $expectedMessage = $this->decodeExpectedJson($expectedMessage);
@@ -71,8 +107,8 @@ class MessengerContext extends SimilarArray implements Context
         throw new Exception(
             sprintf(
                 'The transport doesn\'t contain message with such JSON, actual messages: %s',
-                $this->getPrettyJson($actualMessageList)
-            )
+                $this->getPrettyJson($actualMessageList),
+            ),
         );
     }
 
@@ -93,8 +129,39 @@ class MessengerContext extends SimilarArray implements Context
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',
-                    $this->getPrettyJson($actualMessageList)
-                )
+                    $this->getPrettyJson($actualMessageList),
+                ),
+            );
+        }
+    }
+
+    /**
+     * // phpcs:disable
+     * @And all transport :transportName messages should contain message with JSON and variable fields :fields by mask :mask:
+     * // phpcs:enable
+     */
+    public function allTransportMessagesHaveJsonByFieldsWithMask(
+        string $transportName,
+        string $variableFields,
+        PyStringNode $expectedMessageList,
+    ): void {
+        $expectedMessageList = $this->decodeExpectedJson($expectedMessageList);
+        $variableFields = explode(', ', $variableFields);
+
+        $transport = $this->getMessengerTransportByName($transportName);
+        $actualMessageList = [];
+        $expectedMessages = [];
+        foreach ($transport->get() as $envelope) {
+            $actualMessageList[] = $this->convertToArray($envelope->getMessage());
+            $expectedMessages[] = $expectedMessageList;
+        }
+
+        if (!$this->isArraysSimilar($expectedMessages, $actualMessageList, $variableFields)) {
+            throw new Exception(
+                sprintf(
+                    'The expected transport messages doesn\'t match actual: %s',
+                    $this->getPrettyJson($actualMessageList),
+                ),
             );
         }
     }
@@ -105,7 +172,7 @@ class MessengerContext extends SimilarArray implements Context
     public function allTransportMessagesShouldBeJsonWithVariableFields(
         string $transportName,
         string $variableFields,
-        PyStringNode $expectedMessageList
+        PyStringNode $expectedMessageList,
     ): void {
         $variableFields = $variableFields ? array_map('trim', explode(',', $variableFields)) : [];
         $expectedMessageList = $this->decodeExpectedJson($expectedMessageList);
@@ -120,8 +187,8 @@ class MessengerContext extends SimilarArray implements Context
             throw new Exception(
                 sprintf(
                     'The expected transport messages doesn\'t match actual: %s',
-                    $this->getPrettyJson($actualMessageList)
-                )
+                    $this->getPrettyJson($actualMessageList),
+                ),
             );
         }
     }
@@ -139,14 +206,15 @@ class MessengerContext extends SimilarArray implements Context
                 sprintf(
                     'In transport exist actual count: %s, but expected count: %s',
                     $actualMessageCount,
-                    $expectedMessageCount
-                )
+                    $expectedMessageCount,
+                ),
             );
         }
     }
 
     /**
      * @param array<mixed> $message
+     *
      * @return string|bool
      */
     private function getPrettyJson(array $message)
@@ -156,11 +224,12 @@ class MessengerContext extends SimilarArray implements Context
 
     /**
      * @param mixed $object
+     *
      * @return array<mixed>
      */
     private function convertToArray($object): array
     {
-        return (array) $this->normalizer->normalize($object);
+        return (array)$this->normalizer->normalize($object);
     }
 
     /**
@@ -172,7 +241,7 @@ class MessengerContext extends SimilarArray implements Context
             trim($expectedJson->getRaw()),
             true,
             512,
-            JSON_THROW_ON_ERROR
+            JSON_THROW_ON_ERROR,
         );
     }
 
@@ -192,7 +261,22 @@ class MessengerContext extends SimilarArray implements Context
         }
 
         throw new Exception(
-            'In memory transport ' . $fullName . ' not found'
+            'In memory transport ' . $fullName . ' not found',
         );
+    }
+
+    private static function clearMessenger(): void
+    {
+        if (class_exists(TestTransport::class)) {
+            TestTransport::resetAll();
+        } else {
+            $transports = static::$transportRetriever->getAllTransports();
+
+            foreach ($transports as $transport) {
+                if ($transport instanceof InMemoryTransport) {
+                    $transport->reset();
+                }
+            }
+        }
     }
 }

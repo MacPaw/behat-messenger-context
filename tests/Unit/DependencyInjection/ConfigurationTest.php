@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace DependencyInjection;
+namespace BehatMessengerContext\Tests\Unit\DependencyInjection;
 
 use BehatMessengerContext\DependencyInjection\Configuration;
 use PHPUnit\Framework\TestCase;
