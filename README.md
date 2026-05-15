@@ -1,5 +1,5 @@
 # Behat Messenger Context Bundle
-[![Latest Stable Version](http://poser.pugx.org/macpaw/behat-messenger-context/v)](https://packagist.org/packages/macpaw/behat-messenger-context) 
+![Behat Messenger Context](.github/header.png)
 [![Total Downloads](http://poser.pugx.org/macpaw/behat-messenger-context/downloads)](https://packagist.org/packages/macpaw/behat-messenger-context)
 [![Latest Unstable Version](http://poser.pugx.org/macpaw/behat-messenger-context/v/unstable)](https://packagist.org/packages/macpaw/behat-messenger-context)
 [![License](http://poser.pugx.org/macpaw/behat-messenger-context/license)](https://packagist.org/packages/macpaw/behat-messenger-context)
